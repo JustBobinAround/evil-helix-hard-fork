@@ -434,8 +434,11 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         //"E" => move_next_long_word_end,
 
         "v" => select_mode,
-        // TODO (redundant with count + gg anyway?): "G" => goto_line,
+
+        //TODO: Figure out how to enter selection mode post extend_to_line_bounds
+        "V" => [extend_to_line_bounds,select_mode],
         "g" => { "Goto"
+            "G" => goto_last_line,
             "g" => goto_file_start,
             "e" => goto_last_line,
             "f" => goto_file,
@@ -779,6 +782,8 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         "esc" => exit_select_mode,
 
         "v" => normal_mode,
+        //TODO: figure out how to track line mode state
+        "V" => extend_to_line_bounds,
         "g" => { "Goto"
             "k" => extend_line_up,
             "j" => extend_line_down,

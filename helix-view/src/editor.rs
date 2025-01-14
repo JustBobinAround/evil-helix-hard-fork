@@ -1060,6 +1060,8 @@ impl Config {
         config.color_modes = true;
         config.insert_final_newline = false;
         config.smart_tab = Some(SmartTabConfig::default_evil());
+        //This is just a given for me, sorry.
+        config.line_number = LineNumber::Relative;
         return config;
     }
 }
