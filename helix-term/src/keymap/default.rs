@@ -739,7 +739,14 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         "C-x" => decrement,
 
         "c" => evil_change,
-        "d" => evil_delete,
+        "d" => { "Del"
+            "d" => [select_mode, extend_to_line_bounds, delete_selection],
+            "h" => [move_char_left, delete_selection],
+            "l" => [delete_selection],
+            //TODO: Figure out why this doesn't work
+            //"j" => [select_mode, move_line_down, extend_to_line_bounds, delete_selection],
+            //"k" => [select_mode, move_line_up, extend_to_line_bounds, delete_selection],
+        },
         "x" => evil_delete_immediate,
         "y" => evil_yank,
         "b" => evil_prev_word_start,
