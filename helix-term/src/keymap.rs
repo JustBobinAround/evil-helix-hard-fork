@@ -17,7 +17,7 @@ use std::{
 
 pub use default::default;
 pub use default::default_evil;
-use macros::key;
+use macros::{key, ctrl};
 
 #[derive(Debug, Clone, Default)]
 pub struct KeyTrieNode {
@@ -335,7 +335,7 @@ impl Keymaps {
         let keymaps = &*self.map();
         let keymap = &keymaps[&mode];
 
-        if key!(Esc) == key {
+        if key!(Esc) == key || ctrl!('[') == key {
             if !self.state.is_empty() {
                 // Note that Esc is not included here
                 return KeymapResult::Cancelled(self.state.drain(..).collect());
