@@ -16,6 +16,7 @@ pub use lsp::*;
 use tui::text::Span;
 pub use typed::*;
 
+
 use helix_core::{
     char_idx_at_visual_offset,
     chars::char_is_word,
@@ -87,6 +88,17 @@ use url::Url;
 use grep_regex::RegexMatcherBuilder;
 use grep_searcher::{sinks, BinaryDetection, SearcherBuilder};
 use ignore::{DirEntry, WalkBuilder, WalkState};
+
+#[macro_use]
+macro_rules! selection_case {
+    ($mode: expr) => {
+        if $mode == Mode::Select {
+            Movement::Extend
+        } else {
+            Movement::Move
+        }
+    }
+}
 
 pub type OnKeyCallback = Box<dyn FnOnce(&mut Context, KeyEvent)>;
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
@@ -822,11 +834,7 @@ fn goto_line_end(cx: &mut Context) {
     goto_line_end_impl(
         view,
         doc,
-        if cx.editor.mode == Mode::Select {
-            Movement::Extend
-        } else {
-            Movement::Move
-        },
+        selection_case!(cx.editor.mode),
     )
 }
 
@@ -852,11 +860,7 @@ fn goto_line_end_newline(cx: &mut Context) {
     goto_line_end_newline_impl(
         view,
         doc,
-        if cx.editor.mode == Mode::Select {
-            Movement::Extend
-        } else {
-            Movement::Move
-        },
+        selection_case!(cx.editor.mode),
     )
 }
 
@@ -883,11 +887,7 @@ fn goto_line_start(cx: &mut Context) {
     goto_line_start_impl(
         view,
         doc,
-        if cx.editor.mode == Mode::Select {
-            Movement::Extend
-        } else {
-            Movement::Move
-        },
+        selection_case!(cx.editor.mode),
     )
 }
 
@@ -982,11 +982,7 @@ fn goto_first_nonwhitespace(cx: &mut Context) {
     goto_first_nonwhitespace_impl(
         view,
         doc,
-        if cx.editor.mode == Mode::Select {
-            Movement::Extend
-        } else {
-            Movement::Move
-        },
+        selection_case!(cx.editor.mode),
     )
 }
 
@@ -6651,3 +6647,4 @@ fn evil_till_prev_char(cx: &mut Context) {
 fn evil_find_prev_char(cx: &mut Context) {
     EvilCommands::find_char(cx, find_char, Direction::Backward, true)
 }
+

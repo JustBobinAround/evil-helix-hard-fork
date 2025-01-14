@@ -410,6 +410,8 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         "k" | "up" => move_visual_line_up,
         "l" | "right" => move_char_right,
 
+        //TODO: this needs some work I think. I want this to only work on the
+        // current line so that macros don't suck
         "t" => evil_find_till_char,
         "f" => evil_find_next_char,
         "T" => evil_till_prev_char,
@@ -791,6 +793,8 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         },
     }));
     let insert = keymap!({ "Insert mode"
+        //TODO: escape will a evil mode version that move the cursor back one
+        // unless at idx 0 of the current line
         "esc" => normal_mode,
 
         "C-s" => commit_undo_checkpoint,
