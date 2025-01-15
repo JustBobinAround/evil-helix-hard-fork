@@ -773,10 +773,7 @@ fn move_visual_line_up(cx: &mut Context) {
         move_vertically_visual,
         Direction::Backward,
         Movement::Move,
-    );
-    if cx.editor.using_evil_line_selection {
-        extend_to_line_bounds(cx);
-    }
+    )
 }
 
 fn move_visual_line_down(cx: &mut Context) {
@@ -785,10 +782,7 @@ fn move_visual_line_down(cx: &mut Context) {
         move_vertically_visual,
         Direction::Forward,
         Movement::Move,
-    );
-    if cx.editor.using_evil_line_selection {
-        extend_to_line_bounds(cx);
-    }
+    )
 }
 
 fn extend_char_left(cx: &mut Context) {
@@ -813,7 +807,10 @@ fn extend_visual_line_up(cx: &mut Context) {
         move_vertically_visual,
         Direction::Backward,
         Movement::Extend,
-    )
+    );
+    if cx.editor.using_evil_line_selection {
+        extend_to_line_bounds(cx);
+    }
 }
 
 fn extend_visual_line_down(cx: &mut Context) {
@@ -822,7 +819,10 @@ fn extend_visual_line_down(cx: &mut Context) {
         move_vertically_visual,
         Direction::Forward,
         Movement::Extend,
-    )
+    );
+    if cx.editor.using_evil_line_selection {
+        extend_to_line_bounds(cx);
+    }
 }
 
 fn goto_line_end_impl(view: &mut View, doc: &mut Document, movement: Movement) {
@@ -2717,12 +2717,6 @@ fn extend_to_line_bounds(cx: &mut Context) {
             let (start_line, end_line) = range.line_range(text.slice(..));
             let start = text.line_to_char(start_line);
             let end = text.line_to_char((end_line + 1).min(text.len_lines()));
-            eprintln!("{:#?}", text);
-            eprintln!("{:#?}", range);
-            eprintln!("{:#?}", start_line);
-            eprintln!("{:#?}", end_line);
-            eprintln!("{:#?}", start);
-            eprintln!("{:#?}", end);
 
             Range::new(start, end).with_direction(range.direction())
         }),
