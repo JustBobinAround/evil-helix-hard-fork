@@ -1,10 +1,14 @@
 <div align="center">
 
-<h1>evil-helix</h1>
+<h1>evil-helix (Hard Fork)</h1>
 
-A soft fork of [Helix](https://helix-editor.com) which introduces Vim keybindings and more.
+A hard fork of [Helix](https://helix-editor.com) and [evil-helix](https://github.com/usagi-flow/evil-helix) which introduces Vim keybindings and more.
 
-[![Build status](https://img.shields.io/github/actions/workflow/status/usagi-flow/evil-helix/evil-build-tag.yml?style=for-the-badge&logo=github)](https://github.com/usagi-flow/evil-helix/actions/workflows/evil-build-tag.yml)
+This project is intended to move fast and break things. If you don't want your editor breaking or changing a lot, please go to the original
+[evil-helix](https://github.com/usagi-flow/evil-helix) soft fork. The developers there are much more responsible and know what they are
+doing lol.
+
+[![Build status](https://img.shields.io/github/actions/workflow/status/JustBobinAround/evil-helix-hard-fork/evil-build-tag.yml?style=for-the-badge&logo=github)](https://github.com/JustBobinAround/evil-helix-hard-fork/actions/workflows/evil-build-tag.yml)
 
 ![Screenshot](./screenshot.png)
 
@@ -17,11 +21,11 @@ A soft fork of [Helix](https://helix-editor.com) which introduces Vim keybinding
 
 ## Installation
 
-[Download a package](https://github.com/usagi-flow/evil-helix/releases) and extract it in `/opt`. Additionally, it's recommended to symlink it in `/usr/local/bin`:
+[Download a package](https://github.com/JustBobinAround/evil-helix-hard-fork/releases) and extract it in `/opt`. Additionally, it's recommended to symlink it in `/usr/local/bin`:
 
 ```sh
 cd /opt
-sudo curl -Lo helix.tar.gz https://github.com/usagi-flow/evil-helix/releases/download/release-<VERSION>/helix-<ARCH>-<OS>.tar.gz
+sudo curl -Lo helix.tar.gz https://github.com/JustBobinAround/evil-helix-hard-fork/releases/download/release-<VERSION>/helix-<ARCH>-<OS>.tar.gz
 sudo tar -xf helix.tar.gz
 cd /usr/local/bin
 sudo ln -sv /opt/helix/hx .
@@ -41,12 +45,12 @@ These are the current differences compared to the upstream project:
 	-	Commands: `c`, `d`, `y`, `x`
 	-	Modifiers: `i`
 	-	Motions: `w`, `0`, `$`
--	Basic Vim modeline support ([#3](https://github.com/usagi-flow/evil-helix/pull/3))
--	Adjusted defaults ([511060a](https://github.com/usagi-flow/evil-helix/commit/511060abcfcbe9377ec50e8a0ecaf4c0660776bb)):
+-	Basic Vim modeline support ([#3](https://github.com/JustBobinAround/evil-helix-hard-fork/pull/3))
+-	Adjusted defaults ([511060a](https://github.com/JustBobinAround/evil-helix-hard-fork/commit/511060abcfcbe9377ec50e8a0ecaf4c0660776bb)):
 	-	The Helix "SEL" mode is called "VIS"
 	-	Smart tab is disabled by default
--	If `color_modes` is enabled, color the file type in the statusline as well ([5503542](https://github.com/usagi-flow/evil-helix/commit/5503542c0314936ea91464f2944666ed42fea86c))
--	Minimalistic window separator ([dd990ca](https://github.com/usagi-flow/evil-helix/commit/dd990cad1cb92a024321aca19728c68cb066dd09))
+-	If `color_modes` is enabled, color the file type in the statusline as well ([5503542](https://github.com/JustBobinAround/evil-helix-hard-fork/commit/5503542c0314936ea91464f2944666ed42fea86c))
+-	Minimalistic window separator ([dd990ca](https://github.com/JustBobinAround/evil-helix-hard-fork/commit/dd990cad1cb92a024321aca19728c68cb066dd09))
 
 Moreover, evil-helix introduces the `editor.evil` option, which is `true` by default. It can be set to false to completely deactivate evil-helix behavior without having to use a different build:
 
