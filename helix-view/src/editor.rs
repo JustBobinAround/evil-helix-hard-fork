@@ -1092,6 +1092,7 @@ use futures_util::stream::{Flatten, Once};
 
 pub struct Editor {
     pub evil: bool,
+    pub using_evil_line_selection: bool,
 
     /// Current editing mode.
     pub mode: Mode,
@@ -1246,6 +1247,7 @@ impl Editor {
 
         Self {
             evil: conf.evil,
+            using_evil_line_selection: false,
             mode: Mode::Normal,
             tree: Tree::new(area),
             next_document_id: DocumentId::default(),

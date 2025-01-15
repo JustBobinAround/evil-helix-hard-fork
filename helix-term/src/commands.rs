@@ -312,6 +312,7 @@ impl MappableCommand {
         move_char_right, "Move right",
         move_line_up, "Move up",
         move_line_down, "Move down",
+        enable_visual_line_mode, "Enable visual line mode",
         move_visual_line_up, "Move up",
         move_visual_line_down, "Move down",
         extend_char_left, "Extend left",
@@ -762,13 +763,20 @@ fn move_line_down(cx: &mut Context) {
     move_impl(cx, move_vertically, Direction::Forward, Movement::Move)
 }
 
+fn enable_visual_line_mode(cx: &mut Context) {
+    cx.editor.using_evil_line_selection = true;
+}
+
 fn move_visual_line_up(cx: &mut Context) {
     move_impl(
         cx,
         move_vertically_visual,
         Direction::Backward,
         Movement::Move,
-    )
+    );
+    if cx.editor.using_evil_line_selection {
+        extend_to_line_bounds(cx);
+    }
 }
 
 fn move_visual_line_down(cx: &mut Context) {
@@ -777,7 +785,10 @@ fn move_visual_line_down(cx: &mut Context) {
         move_vertically_visual,
         Direction::Forward,
         Movement::Move,
-    )
+    );
+    if cx.editor.using_evil_line_selection {
+        extend_to_line_bounds(cx);
+    }
 }
 
 fn extend_char_left(cx: &mut Context) {
@@ -2706,6 +2717,12 @@ fn extend_to_line_bounds(cx: &mut Context) {
             let (start_line, end_line) = range.line_range(text.slice(..));
             let start = text.line_to_char(start_line);
             let end = text.line_to_char((end_line + 1).min(text.len_lines()));
+            eprintln!("{:#?}", text);
+            eprintln!("{:#?}", range);
+            eprintln!("{:#?}", start_line);
+            eprintln!("{:#?}", end_line);
+            eprintln!("{:#?}", start);
+            eprintln!("{:#?}", end);
 
             Range::new(start, end).with_direction(range.direction())
         }),
@@ -3610,6 +3627,7 @@ fn open_above(cx: &mut Context) {
 }
 
 fn normal_mode(cx: &mut Context) {
+    cx.editor.using_evil_line_selection = false;
     cx.editor.enter_normal_mode();
 }
 

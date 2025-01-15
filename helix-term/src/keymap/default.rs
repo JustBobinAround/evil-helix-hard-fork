@@ -438,7 +438,7 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         "v" => select_mode,
 
         //TODO: Figure out how to enter selection mode post extend_to_line_bounds
-        "V" => [extend_to_line_bounds,select_mode],
+        "V" => [enable_visual_line_mode,select_mode],
         "g" => { "Goto"
             "G" => goto_last_line,
             "g" => goto_file_start,
@@ -792,7 +792,7 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
 
         "v" => normal_mode,
         //TODO: figure out how to track line mode state
-        "V" => extend_to_line_bounds,
+        "V" => [enable_visual_line_mode, extend_to_line_bounds],
         "g" => { "Goto"
             "k" => extend_line_up,
             "j" => extend_line_down,
