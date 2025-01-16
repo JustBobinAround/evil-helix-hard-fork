@@ -379,6 +379,7 @@ impl MappableCommand {
         merge_selections, "Merge selections",
         merge_consecutive_selections, "Merge consecutive selections",
         search, "Search for regex pattern",
+        keyword_search, "Search for keyword via regex",
         rsearch, "Reverse search for regex pattern",
         search_next, "Select next search match",
         search_prev, "Select previous search match",
@@ -2184,6 +2185,53 @@ fn rsearch(cx: &mut Context) {
     searcher(cx, Direction::Backward)
 }
 
+fn keyword_search(cx: &mut Context) {
+    let direction = Direction::Forward;
+    let reg = cx.register.unwrap_or('/');
+    let config = cx.editor.config();
+    let scrolloff = config.scrolloff;
+    let wrap_around = config.search.wrap_around;
+    let movement = if cx.editor.mode() == Mode::Select {
+        Movement::Extend
+    } else {
+        Movement::Move
+    };
+
+    // TODO: could probably share with select_on_matches?
+    let completions = search_completions(cx, Some(reg));
+
+    ui::regex_prompt(
+        cx,
+        "keyword_search:".into(),
+        Some(reg),
+        move |_editor: &Editor, input: &str| {
+            let mut test = format!("(\\s|[^a-zA-Z0-9])?{}(\\s|[^a-zA-Z0-9])?",input);
+            eprintln!("{:#?}", input);
+            completions
+                .iter()
+                .filter(|comp| comp.starts_with(&test))
+                .map(|comp| (0.., comp.clone().into()))
+                .collect()
+        },
+        move |cx, regex, event| {
+            if event == PromptEvent::Validate {
+                cx.editor.registers.last_search_register = reg;
+            } else if event != PromptEvent::Update {
+                return;
+            }
+            search_impl(
+                cx.editor,
+                &regex,
+                movement,
+                direction,
+                scrolloff,
+                wrap_around,
+                false,
+            );
+        },
+    );
+}
+
 fn searcher(cx: &mut Context, direction: Direction) {
     let reg = cx.register.unwrap_or('/');
     let config = cx.editor.config();
@@ -3623,6 +3671,10 @@ fn open_above(cx: &mut Context) {
 fn normal_mode(cx: &mut Context) {
     cx.editor.using_evil_line_selection = false;
     cx.editor.enter_normal_mode();
+    if cx.editor.evil {
+        //TODO: add check for if at line idx 0 to do nothing
+        move_char_left(cx);        
+    }
 }
 
 // Store a jump on the jumplist.
