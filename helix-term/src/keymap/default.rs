@@ -813,6 +813,9 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         "end" => extend_to_line_end,
         "esc" => exit_select_mode,
 
+        "p" => replace_with_yanked,
+        "P" => replace_with_yanked,
+
         "v" => normal_mode,
         "V" => [enable_visual_line_mode, extend_to_line_bounds],
         "g" => { "Goto"
