@@ -885,10 +885,13 @@ fn goto_line_start_impl(view: &mut View, doc: &mut Document, movement: Movement)
     let text = doc.text().slice(..);
 
     let selection = doc.selection(view.id).clone().transform(|range| {
+        eprintln!("{:#?}",range);
         let line = range.cursor_line(text);
+        eprintln!("{:#?}",line);
 
         // adjust to start of the line
         let pos = text.line_to_char(line);
+        eprintln!("{:#?}",pos);
         range.put_cursor(text, pos, movement == Movement::Extend)
     });
     doc.set_selection(view.id, selection);
@@ -3622,12 +3625,39 @@ fn open_above(cx: &mut Context) {
 }
 
 fn normal_mode(cx: &mut Context) {
+    let count = cx.count();
     cx.editor.using_evil_line_selection = false;
-    cx.editor.enter_normal_mode();
     if cx.editor.evil {
         //TODO: add check for if at line idx 0 to do nothing
-        move_char_left(cx);        
+        let (view, doc) = current!(cx.editor);
+        let text = doc.text().slice(..);
+
+        let selection = doc.selection(view.id).clone().transform(|range| {
+            let line = range.cursor_line(text);
+            let pos = text.line_to_char(line);
+
+            if range.head != pos && cx.editor.mode != Mode::Normal {
+                eprintln!("hit");
+                let text = doc.text().slice(..);
+                let text_fmt = doc.text_format(view.inner_area(doc).width, None);
+                let mut annotations = view.text_annotations(doc, None);
+                move_horizontally(
+                    text,
+                    range,
+                    Direction::Backward,
+                    count,
+                    Movement::Move,
+                    &text_fmt,
+                    &mut annotations,
+                )
+            } else {
+                range
+            }
+        });
+        doc.set_selection(view.id, selection);
+        //move_char_left(cx);        
     }
+    cx.editor.enter_normal_mode();
 }
 
 // Store a jump on the jumplist.

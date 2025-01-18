@@ -404,6 +404,7 @@ pub fn default() -> HashMap<Mode, KeyTrie> {
 }
 
 pub fn default_evil() -> HashMap<Mode, KeyTrie> {
+    //TODO: Condense the chained commands into single functions to have mapped descriptions
     let normal = keymap!({ "Normal mode"
         "h" | "left" => move_char_left,
         "j" | "down" => move_visual_line_down,
@@ -437,7 +438,6 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
 
         "v" => select_mode,
 
-        //TODO: Figure out how to enter selection mode post extend_to_line_bounds
         "V" => [select_mode, enable_visual_line_mode, extend_to_line_bounds],
         "g" => { "Goto"
             "G" => goto_last_line,
@@ -746,7 +746,6 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
             "d" => [select_mode, extend_to_line_bounds, delete_selection],
             "h" => [move_char_left, delete_selection],
             "l" => [delete_selection],
-            //TODO: Figure out why this doesn't work
             "j" => [select_mode, 
                     extend_visual_line_down, 
                     enable_visual_line_mode, 
@@ -814,7 +813,6 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         "esc" => exit_select_mode,
 
         "v" => normal_mode,
-        //TODO: figure out how to track line mode state
         "V" => [enable_visual_line_mode, extend_to_line_bounds],
         "g" => { "Goto"
             "k" => extend_line_up,
