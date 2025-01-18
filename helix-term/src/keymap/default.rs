@@ -629,7 +629,7 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
             "b" => buffer_picker,
             "j" => jumplist_picker,
             "s" => { "Symbol Picker"
-                "s" => keyword_search,
+                "s" => [select_textobject_inner_word, search_selection_detect_word_boundaries],
                 "S" => symbol_picker,
                 "w" => workspace_symbol_picker,
             },

@@ -379,7 +379,6 @@ impl MappableCommand {
         merge_selections, "Merge selections",
         merge_consecutive_selections, "Merge consecutive selections",
         search, "Search for regex pattern",
-        keyword_search, "Search for keyword via regex",
         rsearch, "Reverse search for regex pattern",
         search_next, "Select next search match",
         search_prev, "Select previous search match",
@@ -557,6 +556,7 @@ impl MappableCommand {
         surround_delete, "Surround delete",
         select_textobject_around, "Select around object",
         select_textobject_inner, "Select inside object",
+        select_textobject_inner_word, "Select current word",
         goto_next_function, "Goto next function",
         goto_prev_function, "Goto previous function",
         goto_next_class, "Goto next type definition",
@@ -2183,53 +2183,6 @@ fn search(cx: &mut Context) {
 
 fn rsearch(cx: &mut Context) {
     searcher(cx, Direction::Backward)
-}
-
-fn keyword_search(cx: &mut Context) {
-    let direction = Direction::Forward;
-    let reg = cx.register.unwrap_or('/');
-    let config = cx.editor.config();
-    let scrolloff = config.scrolloff;
-    let wrap_around = config.search.wrap_around;
-    let movement = if cx.editor.mode() == Mode::Select {
-        Movement::Extend
-    } else {
-        Movement::Move
-    };
-
-    // TODO: could probably share with select_on_matches?
-    let completions = search_completions(cx, Some(reg));
-
-    ui::regex_prompt(
-        cx,
-        "keyword_search:".into(),
-        Some(reg),
-        move |_editor: &Editor, input: &str| {
-            let mut test = format!("(\\s|[^a-zA-Z0-9])?{}(\\s|[^a-zA-Z0-9])?",input);
-            eprintln!("{:#?}", input);
-            completions
-                .iter()
-                .filter(|comp| comp.starts_with(&test))
-                .map(|comp| (0.., comp.clone().into()))
-                .collect()
-        },
-        move |cx, regex, event| {
-            if event == PromptEvent::Validate {
-                cx.editor.registers.last_search_register = reg;
-            } else if event != PromptEvent::Update {
-                return;
-            }
-            search_impl(
-                cx.editor,
-                &regex,
-                movement,
-                direction,
-                scrolloff,
-                wrap_around,
-                false,
-            );
-        },
-    );
 }
 
 fn searcher(cx: &mut Context, direction: Direction) {
@@ -5703,6 +5656,20 @@ fn select_textobject_around(cx: &mut Context) {
 
 fn select_textobject_inner(cx: &mut Context) {
     select_textobject(cx, textobject::TextObject::Inside);
+}
+
+fn select_textobject_inner_word(cx: &mut Context) {
+    let count = cx.count();
+    let objtype = textobject::TextObject::Inside;
+    let textobject = move |editor: &mut Editor| {
+        let (view, doc) = current!(editor);
+        let text = doc.text().slice(..);
+        let selection = doc.selection(view.id).clone().transform(|range| {
+            textobject::textobject_word(text, range, objtype, count, false)
+        });
+        doc.set_selection(view.id, selection);
+    };
+    cx.editor.apply_motion(textobject);
 }
 
 fn select_textobject(cx: &mut Context, objtype: textobject::TextObject) {
