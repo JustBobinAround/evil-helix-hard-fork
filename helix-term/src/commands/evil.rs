@@ -7,7 +7,10 @@ use helix_core::movement::move_prev_word_start;
 use helix_core::movement::{is_word_boundary, Direction};
 use helix_core::{movement::move_next_word_end, Rope};
 use helix_core::{Range, Selection, Transaction};
+use helix_core::RopeSlice;
+use helix_core::evil::*;
 use helix_view::document::Mode;
+use helix_view::Editor;
 use helix_view::input::KeyEvent;
 use once_cell::sync::Lazy;
 
@@ -692,7 +695,7 @@ impl EvilCommands {
     where
         F: FnOnce(&mut Context, Direction, bool, bool),
     {
-        let extend = false;
+        let extend = true; //TODO: should this be true?
         base_fn(cx, direction, inclusive, extend);
         let inner_callback = cx.on_next_key_callback.take();
 

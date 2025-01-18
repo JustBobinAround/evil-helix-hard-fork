@@ -419,7 +419,7 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         "F" => evil_find_prev_char,
         "r" => replace,
         "R" => replace_with_yanked,
-        "A-." =>  repeat_last_motion,
+        "." =>  repeat_last_motion,
 
         "~" => switch_case,
         "`" => switch_to_lowercase,
@@ -487,7 +487,8 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
         "A-minus" => merge_selections,
         "A-_" => merge_consecutive_selections,
         "S" => split_selection,
-        ";" => collapse_selection,
+        //TODO: repeat find
+        ";" => evil_repeat_find_char,
         "A-;" => flip_selections,
         "A-o" | "A-up" => expand_selection,
         "A-i" | "A-down" => shrink_selection,

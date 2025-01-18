@@ -44,6 +44,7 @@ use anyhow::{anyhow, bail, Error};
 
 pub use helix_core::diagnostic::Severity;
 use helix_core::{
+    evil::*,
     auto_pairs::AutoPairs,
     syntax::{self, AutoPairConfig, IndentationHeuristic, LanguageServerFeature, SoftWrap},
     Change, LineEnding, Position, Range, Selection, Uri, NATIVE_LINE_ENDING,
@@ -1093,6 +1094,7 @@ use futures_util::stream::{Flatten, Once};
 pub struct Editor {
     pub evil: bool,
     pub using_evil_line_selection: bool,
+    pub last_find_operation: Option<FindOperation>,
 
     /// Current editing mode.
     pub mode: Mode,
@@ -1248,6 +1250,7 @@ impl Editor {
         Self {
             evil: conf.evil,
             using_evil_line_selection: false,
+            last_find_operation: None,
             mode: Mode::Normal,
             tree: Tree::new(area),
             next_document_id: DocumentId::default(),

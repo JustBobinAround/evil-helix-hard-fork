@@ -23,6 +23,7 @@ use helix_core::{
     comment,
     doc_formatter::TextFormat,
     encoding, find_workspace,
+    evil::*,
     graphemes::{self, next_grapheme_boundary, RevRopeGraphemes},
     history::UndoKind,
     increment,
@@ -359,6 +360,7 @@ impl MappableCommand {
         find_prev_char, "Move to previous occurrence of char",
         extend_till_prev_char, "Extend till previous occurrence of char",
         extend_prev_char, "Extend to previous occurrence of char",
+        evil_repeat_find_char, "Repeat last evil find motion",
         repeat_last_motion, "Repeat last motion",
         replace, "Replace with new char",
         switch_case, "Switch (toggle) case",
@@ -885,13 +887,10 @@ fn goto_line_start_impl(view: &mut View, doc: &mut Document, movement: Movement)
     let text = doc.text().slice(..);
 
     let selection = doc.selection(view.id).clone().transform(|range| {
-        eprintln!("{:#?}",range);
         let line = range.cursor_line(text);
-        eprintln!("{:#?}",line);
 
         // adjust to start of the line
         let pos = text.line_to_char(line);
-        eprintln!("{:#?}",pos);
         range.put_cursor(text, pos, movement == Movement::Extend)
     });
     doc.set_selection(view.id, selection);
@@ -1556,9 +1555,31 @@ fn find_char(cx: &mut Context, direction: Direction, inclusive: bool, extend: bo
         let motion = move |editor: &mut Editor| {
             match direction {
                 Direction::Forward => {
+                    if inclusive {
+                        editor.last_find_operation = Some(FindOperation {
+                            last_char: ch,
+                            op_type: FindOperationType::TillNextChar
+                        });
+                    } else {
+                        editor.last_find_operation = Some(FindOperation {
+                            last_char: ch,
+                            op_type: FindOperationType::NextChar
+                        });
+                    }
                     find_char_impl(editor, &find_next_char_impl, inclusive, extend, ch, count)
                 }
                 Direction::Backward => {
+                    if inclusive {
+                        editor.last_find_operation = Some(FindOperation {
+                            last_char: ch,
+                            op_type: FindOperationType::TillPrevChar
+                        });
+                    } else {
+                        editor.last_find_operation = Some(FindOperation {
+                            last_char: ch,
+                            op_type: FindOperationType::PrevChar
+                        });
+                    }
                     find_char_impl(editor, &find_prev_char_impl, inclusive, extend, ch, count)
                 }
             };
@@ -3637,7 +3658,6 @@ fn normal_mode(cx: &mut Context) {
             let pos = text.line_to_char(line);
 
             if range.head != pos && cx.editor.mode != Mode::Normal {
-                eprintln!("hit");
                 let text = doc.text().slice(..);
                 let text_fmt = doc.text_format(view.inner_area(doc).width, None);
                 let mut annotations = view.text_annotations(doc, None);
@@ -6709,3 +6729,34 @@ fn evil_find_prev_char(cx: &mut Context) {
     EvilCommands::find_char(cx, find_char, Direction::Backward, true)
 }
 
+fn evil_repeat_find_char(cx: &mut Context) {
+    let count = cx.count();
+    let motion = move |editor: &mut Editor| {
+        if let Some(find_op) = editor.last_find_operation {
+            let extend = true; //should this be true?
+            match find_op.op_type {
+                FindOperationType::NextChar => {
+                    find_char_impl(editor, &find_next_char_impl, false, extend, find_op.last_char, count)
+                }
+                FindOperationType::TillNextChar => {
+                    find_char_impl(editor, &find_next_char_impl, true, extend, find_op.last_char, count)
+                }
+                FindOperationType::PrevChar => {
+                    find_char_impl(editor, &find_prev_char_impl, false, extend, find_op.last_char, count)
+                }
+                FindOperationType::TillPrevChar => {
+                    find_char_impl(editor, &find_prev_char_impl, true, extend, find_op.last_char, count)
+                }
+            };
+        }
+    };
+
+    cx.editor.apply_motion(motion);
+
+    match cx.editor.mode {
+        Mode::Normal => {
+            EvilCommands::collapse_selections(cx, CollapseMode::ToHead)
+        }
+        _ => {}
+    }
+}
