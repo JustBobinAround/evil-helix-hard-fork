@@ -135,6 +135,7 @@ impl Config {
         Ok(res)
     }
 
+    //TODO: rework this into a struct
     fn is_evil(
         global_config: &Result<ConfigRaw, ConfigLoadError>,
         local_config: &Result<ConfigRaw, ConfigLoadError>,

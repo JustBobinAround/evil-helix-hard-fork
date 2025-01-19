@@ -181,7 +181,7 @@ where
                 match context.editor.mode() {
                     Mode::Insert => &modenames.insert,
                     Mode::Select => {
-                        if context.editor.using_evil_line_selection {
+                        if context.editor.evil_vars.using_evil_line_selection {
                             "VSL"                            
                         } else {
                             &modenames.select

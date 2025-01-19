@@ -808,7 +808,7 @@ fn extend_visual_line_up(cx: &mut Context) {
         Direction::Backward,
         Movement::Extend,
     );
-    if cx.editor.using_evil_line_selection {
+    if cx.editor.evil_vars.using_evil_line_selection {
         extend_to_line_bounds(cx);
     }
 }
@@ -820,7 +820,7 @@ fn extend_visual_line_down(cx: &mut Context) {
         Direction::Forward,
         Movement::Extend,
     );
-    if cx.editor.using_evil_line_selection {
+    if cx.editor.evil_vars.using_evil_line_selection {
         extend_to_line_bounds(cx);
     }    
 }
@@ -3639,9 +3639,9 @@ fn open_above(cx: &mut Context) {
 }
 
 fn normal_mode(cx: &mut Context) {
-    if cx.editor.using_evil_line_selection {
+    if cx.editor.evil_vars.using_evil_line_selection {
         cx.editor.needs_redraw = true;
-        cx.editor.using_evil_line_selection = false; 
+        cx.editor.evil_vars.using_evil_line_selection = false; 
     }
     cx.editor.enter_normal_mode();
 }
@@ -6693,7 +6693,7 @@ fn evil_enable_vis_line_mode(cx: &mut Context) {
     if cx.editor.mode != Mode::Select {
         select_mode(cx);
     }
-    cx.editor.using_evil_line_selection = true;
+    cx.editor.evil_vars.using_evil_line_selection = true;
     extend_to_line_bounds(cx);   
 }
 
@@ -6777,7 +6777,7 @@ fn evil_del_line_end(cx: &mut Context) {
 fn evil_repeat_find_char_motion(cx: &mut Context) {
     let count = cx.count();
     let motion = move |editor: &mut Editor| {
-        if let Some(find_op) = editor.last_find_operation {
+        if let Some(find_op) = editor.evil_vars.last_find_operation {
             let extend = true;
             match find_op.op_type {
                 FindOperationType::NextChar => {
@@ -6806,12 +6806,12 @@ fn evil_repeat_find_char_motion(cx: &mut Context) {
 
 fn evil_update_last_find_op_next(editor: &mut Editor, inclusive: bool, ch: char) {
     if inclusive {
-        editor.last_find_operation = Some(FindOperation {
+        editor.evil_vars.last_find_operation = Some(FindOperation {
             last_char: ch,
             op_type: FindOperationType::TillNextChar
         });
     } else {
-        editor.last_find_operation = Some(FindOperation {
+        editor.evil_vars.last_find_operation = Some(FindOperation {
             last_char: ch,
             op_type: FindOperationType::NextChar
         });
@@ -6820,12 +6820,12 @@ fn evil_update_last_find_op_next(editor: &mut Editor, inclusive: bool, ch: char)
 
 fn evil_update_last_find_op_prev(editor: &mut Editor, inclusive: bool, ch: char) {
     if inclusive {
-        editor.last_find_operation = Some(FindOperation {
+        editor.evil_vars.last_find_operation = Some(FindOperation {
             last_char: ch,
             op_type: FindOperationType::TillPrevChar
         });
     } else {
-        editor.last_find_operation = Some(FindOperation {
+        editor.evil_vars.last_find_operation = Some(FindOperation {
             last_char: ch,
             op_type: FindOperationType::PrevChar
         });

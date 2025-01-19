@@ -1089,10 +1089,15 @@ pub struct Breakpoint {
 
 use futures_util::stream::{Flatten, Once};
 
-pub struct Editor {
-    pub evil: bool,
+pub struct EvilEditorVars{
     pub using_evil_line_selection: bool,    
     pub last_find_operation: Option<FindOperation>,
+    pub using_ctrl_lbrace_as_esc: bool
+}
+
+pub struct Editor {
+    pub evil: bool,
+    pub evil_vars: EvilEditorVars,
 
     /// Current editing mode.
     pub mode: Mode,
@@ -1247,8 +1252,11 @@ impl Editor {
 
         Self {
             evil: conf.evil,
-            using_evil_line_selection: false, 
-            last_find_operation: None,
+            evil_vars: EvilEditorVars {
+                using_evil_line_selection: false, 
+                last_find_operation: None,
+                using_ctrl_lbrace_as_esc: false,
+            },
             mode: Mode::Normal,
             tree: Tree::new(area),
             next_document_id: DocumentId::default(),

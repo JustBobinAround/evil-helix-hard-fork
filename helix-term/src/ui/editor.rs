@@ -883,6 +883,7 @@ impl EditorView {
         cxt: &mut commands::Context,
         event: KeyEvent,
     ) -> Option<KeymapResult> {
+        let event = self.handle_evil_remaps(mode,cxt, event);
         let mut last_mode = mode;
         self.pseudo_pending.extend(self.keymaps.pending());
         let key_result = self.keymaps.get(mode, event);
@@ -926,6 +927,26 @@ impl EditorView {
             KeymapResult::NotFound | KeymapResult::Cancelled(_) => return Some(key_result),
         }
         None
+    }
+
+    fn handle_evil_remaps(
+        &mut self,
+        mode: Mode,
+        cxt: &mut commands::Context,
+        event: KeyEvent,
+    ) -> KeyEvent {
+        if cxt.editor.evil_vars.using_ctrl_lbrace_as_esc {
+            if event == (KeyEvent {code: KeyCode::Char('['), modifiers: crossterm::event::KeyModifiers::CONTROL.into()}) {
+                let mut modifiers = event.modifiers;
+                modifiers.remove(crossterm::event::KeyModifiers::CONTROL.into());
+                return KeyEvent {
+                    code: KeyCode::Esc,
+                    modifiers
+                };             
+            }
+        }
+
+        event
     }
 
     fn insert_mode(&mut self, cx: &mut commands::Context, event: KeyEvent) {
