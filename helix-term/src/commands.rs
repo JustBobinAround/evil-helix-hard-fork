@@ -614,6 +614,8 @@ impl MappableCommand {
         evil_del_line_start, "Delete until line start",
         evil_del_line_end, "Delete until line end",
         evil_repeat_find_char_motion, "Repeat last evil find motion",
+        evil_select_textobject_inner_word, "Select current word",
+        evil_keyword_search, "Search for keyword under cursor",
         command_palette, "Open command palette",
         goto_word, "Jump to a two-character label",
         extend_to_word, "Extend to a two-character label",
@@ -6863,4 +6865,23 @@ fn evil_extending_normal_mode(cx: &mut Context) {
         doc.set_selection(view.id, selection);
     }
     cx.editor.using_evil_line_selection = false; 
+}
+
+fn evil_select_textobject_inner_word(cx: &mut Context) {
+    let count = cx.count();
+    let objtype = textobject::TextObject::Inside;
+    let textobject = move |editor: &mut Editor| {
+        let (view, doc) = current!(editor);
+        let text = doc.text().slice(..);
+        let selection = doc.selection(view.id).clone().transform(|range| {
+            textobject::textobject_word(text, range, objtype, count, false)
+        });
+        doc.set_selection(view.id, selection);
+    };
+    cx.editor.apply_motion(textobject);
+}
+
+fn evil_keyword_search(cx: &mut Context) {
+    evil_select_textobject_inner_word(cx);
+    search_selection_detect_word_boundaries(cx);   
 }
