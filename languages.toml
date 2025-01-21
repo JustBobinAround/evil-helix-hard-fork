@@ -5,6 +5,7 @@ use-grammars = { except = [ "hare", "wren", "gemini" ] }
 
 [language-server]
 
+evil-buffer-lsp = {command = "sleep", args = ["--evil-buffer-lsp"]}
 als = { command = "als" }
 ada-language-server = { command = "ada_language_server" }
 ada-gpr-language-server = {command = "ada_language_server", args = ["--language-gpr"]}
@@ -253,7 +254,7 @@ block-comment-tokens = [
   { start = "/**", end = "*/" },
   { start = "/*!", end = "*/" },
 ]
-language-servers = [ "rust-analyzer" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "rust-analyzer" ]
 indent = { tab-width = 4, unit = "    " }
 persistent-diagnostic-sources = ["rustc", "clippy"]
 
@@ -302,7 +303,7 @@ name = "sway"
 scope = "source.sway"
 injection-regex = "sway"
 file-types = ["sw"]
-language-servers = [ "forc" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "forc" ]
 roots = ["Forc.toml", "Forc.lock"]
 indent = { tab-width = 4, unit = "    " }
 comment-token = "//"
@@ -317,7 +318,7 @@ scope = "source.toml"
 injection-regex = "toml"
 file-types = ["toml", { glob = "pdm.lock" }, { glob = "poetry.lock" }, { glob = "Cargo.lock" }, { glob = "uv.lock" }]
 comment-token = "#"
-language-servers = [ "taplo" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "taplo" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -330,7 +331,7 @@ scope = "source.awk"
 injection-regex = "awk"
 file-types = ["awk", "gawk", "nawk", "mawk"]
 comment-token = "#"
-language-servers = [ "awk-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "awk-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -342,7 +343,7 @@ name = "protobuf"
 scope = "source.proto"
 injection-regex = "proto"
 file-types = ["proto"]
-language-servers = [ "bufls", "pbkit" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "bufls", "pbkit" ]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 2, unit = "  " }
@@ -373,7 +374,7 @@ file-types = ["ex", "exs", { glob = "mix.lock" }]
 shebangs = ["elixir"]
 roots = ["mix.exs", "mix.lock"]
 comment-token = "#"
-language-servers = [ "elixir-ls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "elixir-ls" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -403,7 +404,7 @@ file-types = ["mint"]
 shebangs = []
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "mint" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "mint" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[language]]
@@ -412,7 +413,7 @@ scope = "source.mojo"
 roots = ["__init__.mojo"]
 injection-regex = "mojo"
 file-types = ["mojo", "🔥"]
-language-servers = [ "mojo-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "mojo-lsp" ]
 comment-token = "#"
 indent = { tab-width = 4, unit = "    " }
 auto-format = true
@@ -474,7 +475,7 @@ file-types = [
   "ldtkl",
   { glob = ".swift-format" },
 ]
-language-servers = [ "vscode-json-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "vscode-json-language-server" ]
 auto-format = true
 indent = { tab-width = 2, unit = "  " }
 
@@ -488,7 +489,7 @@ scope = "source.json"
 injection-regex = "jsonc"
 file-types = ["jsonc", { glob = "tsconfig.json" }]
 grammar = "json"
-language-servers = [ "vscode-json-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "vscode-json-language-server" ]
 auto-format = true
 indent = { tab-width = 2, unit = "  " }
 
@@ -497,7 +498,7 @@ name = "json5"
 scope = "source.json5"
 injection-regex = "json5"
 file-types = ["json5"]
-language-servers = []
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },]
 comment-token = "//"
 indent = { tab-width = 4, unit = "    " }
 # https://json5.org
@@ -513,7 +514,7 @@ injection-regex = "c"
 file-types = ["c"] # TODO: ["h"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "clangd" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "clangd" ]
 indent = { tab-width = 2, unit = "  " }
 
 [language.debugger]
@@ -550,7 +551,7 @@ injection-regex = "cpp"
 file-types = ["cc", "hh", "c++", "cpp", "hpp", "h", "ipp", "tpp", "cxx", "hxx", "ixx", "txx", "ino", "C", "H", "cu", "cuh", "cppm", "h++", "ii", "inl", { glob = ".hpp.in" }, { glob = ".h.in" }]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "clangd" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "clangd" ]
 indent = { tab-width = 2, unit = "  " }
 
 [language.debugger]
@@ -588,7 +589,7 @@ roots = ["shard.yml", "shard.lock"]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
 grammar = "ruby"
-language-servers = [ "crystalline" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "crystalline" ]
 
 [[language]]
 name = "c-sharp"
@@ -599,7 +600,7 @@ roots = ["sln", "csproj"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 4, unit = "\t" }
-language-servers = [ "omnisharp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "omnisharp" ]
 
 [language.debugger]
 name = "netcoredbg"
@@ -657,7 +658,7 @@ roots = ["go.work", "go.mod"]
 auto-format = true
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "gopls", "golangci-lint-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "gopls", "golangci-lint-lsp" ]
 # TODO: gopls needs utf-8 offsets?
 indent = { tab-width = 4, unit = "\t" }
 
@@ -709,7 +710,7 @@ injection-regex = "gomod"
 file-types = [{ glob = "go.mod" }]
 auto-format = true
 comment-token = "//"
-language-servers = [ "gopls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "gopls" ]
 indent = { tab-width = 4, unit = "\t" }
 
 [[grammar]]
@@ -723,7 +724,7 @@ injection-regex = "gotmpl"
 file-types = ["gotmpl"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "gopls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "gopls" ]
 indent = { tab-width = 2, unit = " " }
 
 [[grammar]]
@@ -737,7 +738,7 @@ injection-regex = "gowork"
 file-types = [{ glob = "go.work" }]
 auto-format = true
 comment-token = "//"
-language-servers = [ "gopls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "gopls" ]
 indent = { tab-width = 4, unit = "\t" }
 
 [[grammar]]
@@ -754,7 +755,7 @@ shebangs = ["node"]
 roots = [ "package.json" ]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "typescript-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "typescript-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 
 [language.debugger]
@@ -782,7 +783,7 @@ file-types = ["jsx"]
 roots = [ "package.json" ]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "typescript-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "typescript-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 grammar = "javascript"
 
@@ -796,7 +797,7 @@ shebangs = ["deno", "bun", "ts-node"]
 roots = [ "package.json", "tsconfig.json" ]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "typescript-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "typescript-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -813,7 +814,7 @@ roots = ["tspconfig.yaml"]
 auto-format = true
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = ["typespec"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"typespec"]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -829,7 +830,7 @@ file-types = ["tsx"]
 roots = [ "package.json", "tsconfig.json" ]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "typescript-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "typescript-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -842,7 +843,7 @@ scope = "source.css"
 injection-regex = "css"
 file-types = ["css", "scss"]
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "vscode-css-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "vscode-css-language-server" ]
 auto-format = true
 indent = { tab-width = 2, unit = "  " }
 
@@ -856,7 +857,7 @@ scope = "source.scss"
 injection-regex = "scss"
 file-types = ["scss"]
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "vscode-css-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "vscode-css-language-server" ]
 auto-format = true
 indent = { tab-width = 2, unit = "  " }
 
@@ -870,7 +871,7 @@ scope = "text.html.basic"
 injection-regex = "html"
 file-types = ["html", "htm", "shtml", "xhtml", "xht", "jsp", "asp", "aspx", "jshtm", "volt", "rhtml", "cshtml"]
 block-comment-tokens = { start = "<!--", end = "-->" }
-language-servers = [ "vscode-html-language-server", "superhtml" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "vscode-html-language-server", "superhtml" ]
 auto-format = true
 indent = { tab-width = 2, unit = "  " }
 
@@ -886,7 +887,7 @@ file-types = ["py", "pyi", "py3", "pyw", "ptl", "rpy", "cpy", "ipy", "pyt", { gl
 shebangs = ["python", "uv"]
 roots = ["pyproject.toml", "setup.py", "poetry.lock", "pyrightconfig.json"]
 comment-token = "#"
-language-servers = ["ruff", "jedi", "pylsp"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"ruff", "jedi", "pylsp"]
 # TODO: pyls needs utf-8 offsets
 indent = { tab-width = 4, unit = "    " }
 
@@ -901,7 +902,7 @@ injection-regex = "nickel"
 file-types = ["ncl"]
 shebangs = []
 comment-token = "#"
-language-servers = [ "nls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "nls" ]
 indent = { tab-width = 2, unit = "  " }
 
 [language.auto-pairs]
@@ -921,7 +922,7 @@ injection-regex = "nix"
 file-types = ["nix"]
 shebangs = []
 comment-token = "#"
-language-servers = [ "nil", "nixd" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "nil", "nixd" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -971,7 +972,7 @@ file-types = [
 ]
 shebangs = ["ruby"]
 comment-token = "#"
-language-servers = [ "solargraph" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "solargraph" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -1031,7 +1032,7 @@ file-types = [
 ]
 shebangs = ["sh", "bash", "dash", "zsh"]
 comment-token = "#"
-language-servers = [ "bash-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "bash-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -1046,7 +1047,7 @@ file-types = ["php", "inc", "php4", "php5", "phtml", "ctp"]
 shebangs = ["php"]
 roots = ["composer.json", "index.php"]
 comment-token = "//"
-language-servers = [ "intelephense" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "intelephense" ]
 indent = { tab-width = 4, unit = "    " }
 
 [[grammar]]
@@ -1094,7 +1095,7 @@ scope = "source.tex"
 injection-regex = "tex"
 file-types = ["tex", "sty", "cls", "Rd", "bbx", "cbx"]
 comment-token = "%"
-language-servers = [ "texlab" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "texlab" ]
 indent = { tab-width = 4, unit = "\t" }
 
 [[grammar]]
@@ -1107,7 +1108,7 @@ scope = "source.bib"
 injection-regex = "bib"
 file-types = ["bib"]
 comment-token = "%"
-language-servers = [ "texlab" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "texlab" ]
 indent = { tab-width = 4, unit = "\t" }
 auto-format = true
 
@@ -1136,7 +1137,7 @@ file-types = ["lean"]
 roots = [ "lakefile.lean" ]
 comment-token = "--"
 block-comment-tokens = { start = "/-", end = "-/" }
-language-servers = [ "lean" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "lean" ]
 indent = { tab-width = 2, unit = "  " }
 rulers = [101]
 text-width = 100
@@ -1172,7 +1173,7 @@ shebangs = ["julia"]
 roots = ["Manifest.toml", "Project.toml"]
 comment-token = "#"
 block-comment-tokens = { start = "#=", end = "=#" }
-language-servers = [ "julia" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "julia" ]
 indent = { tab-width = 4, unit = "    " }
 
 [[grammar]]
@@ -1185,7 +1186,7 @@ scope = "source.java"
 injection-regex = "java"
 file-types = ["java", "jav", "pde"]
 roots = ["pom.xml", "build.gradle", "build.gradle.kts"]
-language-servers = [ "jdtls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "jdtls" ]
 indent = { tab-width = 2, unit = "  " }
 comment-tokens = ["//"]
 block-comment-tokens = { start = "/*", end = "*/" }
@@ -1238,7 +1239,7 @@ injection-regex = "ocaml"
 file-types = ["ml"]
 shebangs = ["ocaml", "ocamlrun", "ocamlscript"]
 block-comment-tokens = { start = "(*", end = "*)" }
-language-servers = [ "ocamllsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "ocamllsp" ]
 indent = { tab-width = 2, unit = "  " }
 
 [language.auto-pairs]
@@ -1258,7 +1259,7 @@ file-types = ["mli"]
 shebangs = []
 block-comment-tokens = { start = "(*", end = "*)" }
 comment-token = "(**)"
-language-servers = [ "ocamllsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "ocamllsp" ]
 indent = { tab-width = 2, unit = "  " }
 
 [language.auto-pairs]
@@ -1298,7 +1299,7 @@ roots = [".luarc.json", ".luacheckrc", ".stylua.toml", "selene.toml", ".git"]
 comment-token = "--"
 block-comment-tokens = { start = "--[[", end = "--]]" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "lua-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "lua-language-server" ]
 
 [[grammar]]
 name = "lua"
@@ -1316,7 +1317,7 @@ file-types = ["tl"]
 comment-tokens = "--"
 block-comment-tokens = { start = "--[[", end = "--]]" }
 roots = [ "tlconfig.lua" ]
-language-servers = [ "teal-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "teal-lsp" ]
 
 [[language]]
 name = "svelte"
@@ -1324,7 +1325,7 @@ scope = "source.svelte"
 injection-regex = "svelte"
 file-types = ["svelte"]
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "svelteserver" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "svelteserver" ]
 
 [[grammar]]
 name = "svelte"
@@ -1338,7 +1339,7 @@ file-types = ["vue"]
 roots = ["package.json"]
 block-comment-tokens = { start = "<!--", end = "-->" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "vuels" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "vuels" ]
 
 [[grammar]]
 name = "vue"
@@ -1350,7 +1351,7 @@ scope = "source.yaml"
 file-types = ["yml", "yaml", { glob = ".prettierrc" }, { glob = ".clangd" }, { glob = ".clang-format" }]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "yaml-language-server", "ansible-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "yaml-language-server", "ansible-language-server" ]
 injection-regex = "yml|yaml"
 
 [[grammar]]
@@ -1374,7 +1375,7 @@ file-types = ["hs", "hs-boot", "hsc"]
 roots = ["Setup.hs", "stack.yaml", "cabal.project"]
 comment-token = "--"
 block-comment-tokens = { start = "{-", end = "-}" }
-language-servers = [ "haskell-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "haskell-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -1400,7 +1401,7 @@ file-types = ["purs"]
 roots = ["spago.yaml", "spago.dhall", "bower.json"]
 comment-token = "--"
 block-comment-tokens = { start = "{-", end = "-}" }
-language-servers = [ "purescript-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "purescript-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 auto-format = true
 formatter = { command = "purs-tidy", args = ["format"] }
@@ -1417,7 +1418,7 @@ file-types = ["zig", "zon"]
 roots = ["build.zig"]
 auto-format = true
 comment-tokens = ["//", "///", "//!"]
-language-servers = [ "zls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "zls" ]
 indent = { tab-width = 4, unit = "    " }
 formatter = { command = "zig" , args = ["fmt", "--stdin"] }
 
@@ -1455,7 +1456,7 @@ file-types = ["pl", "prolog"]
 shebangs = ["swipl"]
 comment-token = "%"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "swipl" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "swipl" ]
 
 [[language]]
 name = "tsq"
@@ -1463,7 +1464,7 @@ scope = "source.tsq"
 file-types = [{ glob = "queries/*.scm" }, { glob = "injections.scm" },  { glob = "highlights.scm" },  { glob = "indents.scm" },  { glob = "textobjects.scm" },  { glob = "locals.scm" },  { glob = "tags.scm" }]
 comment-token = ";"
 injection-regex = "tsq"
-language-servers = ["ts_query_ls"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"ts_query_ls"]
 grammar = "query"
 indent = { tab-width = 2, unit = "  " }
 
@@ -1483,7 +1484,7 @@ file-types = ["cmake", { glob = "CMakeLists.txt" }]
 comment-token = "#"
 block-comment-tokens = { start = "#[[", end = "]]" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "cmake-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "cmake-language-server" ]
 injection-regex = "cmake"
 
 [[grammar]]
@@ -1510,7 +1511,7 @@ file-types = ["glsl", "vert", "tesc", "tese", "geom", "frag", "comp" ]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 4, unit = "    " }
-language-servers = [ "glsl_analyzer" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "glsl_analyzer" ]
 injection-regex = "glsl"
 
 [[grammar]]
@@ -1523,7 +1524,7 @@ scope = "source.perl"
 file-types = ["pl", "pm", "t", "psgi", "raku", "rakumod", "rakutest", "rakudoc", "nqp", "p6", "pl6", "pm6"]
 shebangs = ["perl"]
 comment-token = "#"
-language-servers = [ "perlnavigator" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "perlnavigator" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -1548,7 +1549,7 @@ shebangs = ["racket"]
 comment-token = ";"
 indent = { tab-width = 2, unit = "  " }
 block-comment-tokens = { start = "#|", end = "|#" }
-language-servers = [ "racket" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "racket" ]
 grammar = "scheme"
 
 [[language]]
@@ -1558,7 +1559,7 @@ file-types = ["lisp", "asd", "cl", "l", "lsp", "ny", "podsl", "sexp"]
 shebangs = ["lisp", "sbcl", "ccl", "clisp", "ecl"]
 comment-token = ";"
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "cl-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "cl-lsp" ]
 grammar = "scheme"
 
 [language.auto-pairs]
@@ -1583,7 +1584,7 @@ scope = "source.wgsl"
 file-types = ["wgsl"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "wgsl_analyzer" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "wgsl_analyzer" ]
 indent = { tab-width = 4, unit = "    " }
 
 [[grammar]]
@@ -1643,7 +1644,7 @@ scope = "source.md"
 injection-regex = "md|markdown"
 file-types = ["md", "livemd", "markdown", "mdx", "mkd", "mkdn", "mdwn", "mdown", "markdn", "mdtxt", "mdtext", "workbook", { glob = "PULLREQ_EDITMSG" }]
 roots = [".marksman.toml"]
-language-servers = [ "marksman", "markdown-oxide" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "marksman", "markdown-oxide" ]
 indent = { tab-width = 2, unit = "  " }
 block-comment-tokens = { start = "<!--", end = "-->" }
 
@@ -1670,7 +1671,7 @@ roots = ["pubspec.yaml"]
 auto-format = true
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "dart" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "dart" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -1685,7 +1686,7 @@ file-types = ["scala", "sbt", "sc"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "metals" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "metals" ]
 
 [[grammar]]
 name = "scala"
@@ -1712,7 +1713,7 @@ file-types = [
 ]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "docker-langserver" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "docker-langserver" ]
 
 [[grammar]]
 name = "dockerfile"
@@ -1722,7 +1723,7 @@ source = { git = "https://github.com/camdencheek/tree-sitter-dockerfile", rev = 
 name = "docker-compose"
 scope = "source.yaml.docker-compose"
 roots = ["docker-compose.yaml", "docker-compose.yml"]
-language-servers = [ "docker-compose-langserver", "yaml-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "docker-compose-langserver", "yaml-language-server" ]
 file-types = [{ glob = "docker-compose.yaml" }, { glob = "docker-compose.yml" }]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
@@ -1816,7 +1817,7 @@ name = "graphql"
 scope = "source.graphql"
 injection-regex = "graphql"
 file-types = ["gql", "graphql", "graphqls"]
-language-servers = [ "graphql-language-service" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "graphql-language-service" ]
 comment-token = "#"
 block-comment-tokens = { start = "\"\"\"", end = "\"\"\"" }
 indent = { tab-width = 2, unit = "  " }
@@ -1834,7 +1835,7 @@ roots = ["elm.json"]
 auto-format = true
 comment-token = "--"
 block-comment-tokens = { start = "{-", end = "-}" }
-language-servers = [ "elm-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "elm-language-server" ]
 indent = { tab-width = 4, unit = "    " }
 
 [[grammar]]
@@ -1861,7 +1862,7 @@ roots = ["bsconfig.json"]
 auto-format = true
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "rescript-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "rescript-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -1877,7 +1878,7 @@ roots = ["rebar.config"]
 shebangs = ["escript"]
 comment-token = "%%"
 indent = { tab-width = 4, unit = "    " }
-language-servers = [ "erlang-ls", "elp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "erlang-ls", "elp" ]
 
 [[grammar]]
 name = "erlang"
@@ -1891,7 +1892,7 @@ roots = ["settings.gradle", "settings.gradle.kts"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 4, unit = "    " }
-language-servers = [ "kotlin-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "kotlin-language-server" ]
 
 [[grammar]]
 name = "kotlin"
@@ -1906,7 +1907,7 @@ file-types = ["hcl", "tf", "nomad"]
 comment-token = "#"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "terraform-ls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "terraform-ls" ]
 auto-format = true
 
 [[grammar]]
@@ -1921,7 +1922,7 @@ file-types = ["tfvars"]
 comment-token = "#"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "terraform-ls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "terraform-ls" ]
 auto-format = true
 grammar = "hcl"
 
@@ -1944,7 +1945,7 @@ file-types = ["sol"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 4, unit = "    " }
-language-servers = [ "solc" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "solc" ]
 
 [[grammar]]
 name = "solidity"
@@ -1958,7 +1959,7 @@ file-types = ["gleam"]
 roots = ["gleam.toml"]
 comment-token = "//"
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "gleam" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "gleam" ]
 auto-format = true
 
 [[grammar]]
@@ -1985,7 +1986,7 @@ injection-regex = "robot"
 file-types = ["robot", "resource"]
 comment-token = "#"
 indent = { tab-width = 4, unit = " " }
-language-servers = [ "robotframework_ls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "robotframework_ls" ]
 
 [[grammar]]
 name = "robot"
@@ -1999,7 +2000,7 @@ file-types = ["r", "R", { glob = ".Rprofile" }, { glob = "Rprofile.site" }, { gl
 shebangs = ["r", "R"]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "r" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "r" ]
 
 [[grammar]]
 name = "r"
@@ -2014,7 +2015,7 @@ file-types = ["rmd", "Rmd"]
 indent = { tab-width = 2, unit = "  " }
 grammar = "markdown"
 block-comment-tokens = { start = "<!--", end = "-->" }
-language-servers = [ "r" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "r" ]
 
 [[language]]
 name = "swift"
@@ -2025,7 +2026,7 @@ roots = [ "Package.swift" ]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 formatter = { command = "swift-format" }
-language-servers = [ "sourcekit-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "sourcekit-lsp" ]
 
 [[grammar]]
 name = "swift"
@@ -2074,7 +2075,7 @@ file-types = ["heex"]
 roots = ["mix.exs", "mix.lock"]
 block-comment-tokens = { start = "<!--", end = "-->" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "elixir-ls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "elixir-ls" ]
 
 [[grammar]]
 name = "heex"
@@ -2132,7 +2133,7 @@ file-types = ["nu", "nuon"]
 shebangs = ["nu"]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "nu-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "nu-lsp" ]
 
 [[grammar]]
 name = "nu"
@@ -2146,7 +2147,7 @@ file-types = ["vala", "vapi"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "vala-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "vala-language-server" ]
 
 [[grammar]]
 name = "vala"
@@ -2185,7 +2186,7 @@ file-types = ["cairo"]
 comment-token = "//"
 indent = { tab-width = 4, unit = "    " }
 # auto-format = true
-language-servers = [ "cairo-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "cairo-language-server" ]
 
 [[grammar]]
 name = "cairo"
@@ -2210,7 +2211,7 @@ auto-format = true
 scope = "source.odin"
 file-types = ["odin"]
 roots = ["ols.json", "main.odin"]
-language-servers = [ "ols" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "ols" ]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 4, unit = "\t" }
@@ -2250,7 +2251,7 @@ injection-regex = "meson"
 file-types = [{ glob = "meson.build" }, { glob = "meson.options" }, { glob = "meson_options.txt" }]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
-language-servers = ["mesonlsp"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"mesonlsp"]
 
 [[grammar]]
 name = "meson"
@@ -2291,7 +2292,7 @@ scope = "source.v"
 file-types = ["v", "vv", "vsh"]
 shebangs = ["v run"]
 roots = ["v.mod"]
-language-servers = [ "vlang-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "vlang-language-server" ]
 auto-format = true
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
@@ -2307,7 +2308,7 @@ scope = "source.verilog"
 file-types = ["v", "vh", "sv", "svh"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "svlangserver" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "svlangserver" ]
 indent = { tab-width = 2, unit = "  " }
 injection-regex = "verilog"
 
@@ -2344,7 +2345,7 @@ injection-regex = "openscad"
 file-types = ["scad"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "openscad-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "openscad-lsp" ]
 indent = { tab-width = 2, unit = "\t" }
 
 [[grammar]]
@@ -2358,7 +2359,7 @@ injection-regex = "prisma"
 file-types = ["prisma"]
 roots = ["package.json"]
 comment-token = "//"
-language-servers = [ "prisma-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "prisma-language-server" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -2372,7 +2373,7 @@ injection-regex = "(clojure|clj|edn|boot)"
 file-types = ["clj", "cljs", "cljc", "clje", "cljr", "cljx", "edn", "boot"]
 roots = ["project.clj", "build.boot", "deps.edn", "shadow-cljs.edn"]
 comment-token = ";"
-language-servers = [ "clojure-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "clojure-lsp" ]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -2395,7 +2396,7 @@ shebangs = ["elvish"]
 file-types = ["elv"]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "elvish" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "elvish" ]
 grammar = "elvish"
 
 [[grammar]]
@@ -2411,7 +2412,7 @@ shebangs = []
 comment-token = "--"
 block-comment-tokens = { start = "{-", end = "-}" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "idris2-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "idris2-lsp" ]
 
 [[language]]
 name = "fortran"
@@ -2421,7 +2422,7 @@ file-types = ["f", "for", "f90", "f95", "f03"]
 roots = ["fpm.toml"]
 comment-token = "!"
 indent = { tab-width = 4, unit = "    "}
-language-servers = [ "fortls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "fortls" ]
 
 [[grammar]]
 name = "fortran"
@@ -2447,7 +2448,7 @@ file-types = ["dot"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 4, unit = "    " }
-language-servers = [ "dot-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "dot-language-server" ]
 
 [[grammar]]
 name = "dot"
@@ -2461,7 +2462,7 @@ file-types = ["cue"]
 roots = ["cue.mod"]
 auto-format = true
 comment-token = "//"
-language-servers = [ "cuelsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "cuelsp" ]
 indent = { tab-width = 4, unit = "\t" }
 formatter = { command = "cue", args = ["fmt", "-"] }
 
@@ -2477,7 +2478,7 @@ file-types = ["slint"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 4, unit = "    " }
-language-servers = [ "slint-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "slint-lsp" ]
 
 [[grammar]]
 name = "slint"
@@ -2527,7 +2528,7 @@ file-types = ["pas", "pp", "inc", "lpr", "lfm"]
 comment-token = "//"
 block-comment-tokens = { start = "{", end = "}" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "pasls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "pasls" ]
 
 [[grammar]]
 name = "pascal"
@@ -2558,7 +2559,7 @@ roots = ["jsonnetfile.json"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "jsonnet-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "jsonnet-language-server" ]
 
 [[grammar]]
 name = "jsonnet"
@@ -2572,7 +2573,7 @@ file-types = ["adb", "ads"]
 roots = ["alire.toml"]
 comment-token = "--"
 indent = { tab-width = 3, unit = "   " }
-language-servers = ["ada-language-server"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"ada-language-server"]
 
 
 [[grammar]]
@@ -2598,7 +2599,7 @@ injection-regex = "bass"
 file-types = ["bass"]
 comment-token = ";"
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "bass" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "bass" ]
 
 [[grammar]]
 name = "bass"
@@ -2634,7 +2635,7 @@ comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 injection-regex = "d"
 indent = { tab-width = 4, unit = "    "}
-language-servers = [ "serve-d" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "serve-d" ]
 formatter = { command = "dfmt" }
 
 [[grammar]]
@@ -2855,7 +2856,7 @@ auto-format = true
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 2, unit = " "}
-language-servers = [ "bicep-langserver" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "bicep-langserver" ]
 
 [[grammar]]
 name = "bicep"
@@ -2865,7 +2866,7 @@ source = { git = "https://github.com/tree-sitter-grammars/tree-sitter-bicep", re
 name = "qml"
 scope = "source.qml"
 file-types = ["qml"]
-language-servers = [ "qmlls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "qmlls" ]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 4, unit = "    " }
@@ -2921,7 +2922,7 @@ file-types = ["dhall"]
 comment-token = "--"
 block-comment-tokens = { start = "{-", end = "-}" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "dhall-lsp-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "dhall-lsp-server" ]
 formatter = { command = "dhall" , args = ["format"] }
 
 [[grammar]]
@@ -3084,7 +3085,7 @@ file-types = ["smithy"]
 roots = ["smithy-build.json"]
 comment-token = "//"
 indent = { tab-width = 4, unit = "    " }
-language-servers = [ "cs" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "cs" ]
 
 [[grammar]]
 name = "smithy"
@@ -3095,7 +3096,7 @@ name = "vhdl"
 scope = "source.vhdl"
 file-types = ["vhd", "vhdl"]
 comment-token = "--"
-language-servers = [ "vhdl_ls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "vhdl_ls" ]
 indent = { tab-width = 2, unit = "  " }
 injection-regex = "vhdl"
 
@@ -3110,7 +3111,7 @@ injection-regex = "rego"
 file-types = ["rego"]
 auto-format = true
 comment-token = "#"
-language-servers = [ "regols" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "regols" ]
 grammar = "rego"
 
 [[grammar]]
@@ -3126,7 +3127,7 @@ shebangs = []
 comment-token = "#"
 block-comment-tokens = { start = "#[", end = "]#" }
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "nimlangserver" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "nimlangserver" ]
 
 [language.auto-pairs]
 '(' = ')'
@@ -3146,7 +3147,7 @@ file-types = [ "cabal" ]
 roots = ["cabal.project", "Setup.hs"]
 indent = { tab-width = 2, unit = "  " }
 comment-token = "--"
-language-servers = [ "haskell-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "haskell-language-server" ]
 
 [[language]]
 name = "hurl"
@@ -3166,7 +3167,7 @@ name = "markdoc"
 scope = "text.markdoc"
 block-comment-tokens = { start = "<!--", end = "-->" }
 file-types = ["mdoc"]
-language-servers = [ "markdoc-ls" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "markdoc-ls" ]
 
 [[grammar]]
 name = "markdoc"
@@ -3178,7 +3179,7 @@ scope = "source.cl"
 injection-regex = "(cl|opencl)"
 file-types = ["cl"]
 comment-token = "//"
-language-servers = [ "clangd" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "clangd" ]
 
 [[grammar]]
 name = "opencl"
@@ -3219,7 +3220,7 @@ injection-regex = "blueprint"
 file-types = ["blp"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [ "blueprint-compiler" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "blueprint-compiler" ]
 indent = { tab-width = 4, unit = "    " }
 
 [[grammar]]
@@ -3232,7 +3233,7 @@ scope = "source.forth"
 injection-regex = "forth"
 file-types = ["fs", "forth", "fth", "4th"]
 comment-token = "\\"
-language-servers = [ "forth-lsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "forth-lsp" ]
 indent = { tab-width = 3, unit = "   " }
 
 [[grammar]]
@@ -3249,7 +3250,7 @@ comment-token = "//"
 block-comment-tokens = { start = "(*", end = "*)" }
 indent = { tab-width = 4, unit = "    " }
 auto-format = true
-language-servers = ["fsharp-ls"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"fsharp-ls"]
 
 [[grammar]]
 name = "fsharp"
@@ -3283,7 +3284,7 @@ injection-regex = "typ(st)?"
 file-types = ["typst", "typ"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = ["tinymist", "typst-lsp"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"tinymist", "typst-lsp"]
 indent = { tab-width = 2, unit = "  " }
 
 [language.auto-pairs]
@@ -3338,7 +3339,7 @@ scope = "source.jq"
 injection-regex = "jq"
 file-types = ["jq"]
 comment-token = "#"
-language-servers = ["jq-lsp"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"jq-lsp"]
 indent = { tab-width = 2, unit = "  " }
 
 [[grammar]]
@@ -3414,7 +3415,7 @@ injection-regex = "agda"
 file-types = ["agda"]
 roots = []
 comment-token = "--"
-# language-servers = [ "als" ]
+# language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "als" ]
 # the agda language server is of questionable functionality.
 auto-format = false
 indent = { tab-width = 2, unit = "  " }
@@ -3440,7 +3441,7 @@ file-types = ["templ"]
 roots = ["go.work", "go.mod"]
 comment-token = "//"
 indent = { tab-width = 2, unit = "  " }
-language-servers = [ "templ" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "templ" ]
 
 [[grammar]]
 name = "templ"
@@ -3460,7 +3461,7 @@ source = { git = "https://github.com/dynamotn/tree-sitter-dbml", rev = "2e2fa564
 
 [[language]]
 name = "bitbake"
-language-servers = [ "bitbake-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "bitbake-language-server" ]
 scope = "source.bitbake"
 file-types = ["bb", "bbappend", "bbclass", {glob = "conf/*.conf" }, {glob = "conf/*/*.{inc,conf}" }, { glob = "recipe-*/*/*.inc" }]
 comment-token = "#"
@@ -3513,7 +3514,7 @@ injection-regex = "koka"
 file-types = ["kk"]
 comment-token = "//"
 indent = { tab-width = 8, unit = "  " }
-language-servers = ["koka"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"koka"]
 
 [[grammar]]
 name = "koka"
@@ -3613,7 +3614,7 @@ roots = ["hyprland.conf"]
 file-types = [ { glob = "hypr/*.conf" }]
 comment-token = "#"
 grammar = "hyprlang"
-language-servers = ["hyprls"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"hyprls"]
 
 [[grammar]]
 name = "hyprlang"
@@ -3649,7 +3650,7 @@ scope = "source.bash"
 file-types = [{ glob = "PKGBUILD" }]
 comment-token = "#"
 grammar = "bash"
-language-servers = [
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },
   "pkgbuild-language-server",
   { except-features = [
     "diagnostics",
@@ -3662,7 +3663,7 @@ grammar = "gotmpl"
 scope = "source.helm"
 roots = ["Chart.yaml"]
 comment-token = "#"
-language-servers = ["helm_ls"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"helm_ls"]
 file-types = [ { glob = "templates/*.yaml" }, { glob = "templates/*.yml" }, { glob = "templates/_*.tpl"}, { glob = "templates/NOTES.txt" } ]
 
 [[language]]
@@ -3673,7 +3674,7 @@ file-types = [{ glob = "{app,addon}/{components,templates}/*.hbs" }]
 block-comment-tokens = { start = "{{!", end = "}}" }
 roots = ["package.json", "ember-cli-build.js"]
 grammar = "glimmer"
-language-servers = ["ember-language-server"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"ember-language-server"]
 formatter = { command = "prettier", args = ['--parser', 'glimmer'] }
 
 [language.auto-pairs]
@@ -3719,7 +3720,7 @@ file-types = [
 ]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
-language-servers = ["earthlyls"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"earthlyls"]
 
 [[grammar]]
 name = "earthfile"
@@ -3773,7 +3774,7 @@ roots = ["Move.toml"]
 file-types = ["move"]
 comment-token = "//"
 indent = { tab-width = 4, unit = "    " }
-language-servers = []
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },]
 
 [[grammar]]
 name = "move"
@@ -3787,7 +3788,7 @@ file-types = ["pest"]
 comment-tokens = ["//", "///", "//!"]
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 4, unit = "    " }
-language-servers = ["pest-language-server"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"pest-language-server"]
 
 [language.auto-pairs]
 '(' = ')'
@@ -3820,7 +3821,7 @@ file-types = ["gjs"]
 roots = ["package.json", "ember-cli-build.js"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },
     { except-features = [
         "format", "diagnostics",
     ], name = "typescript-language-server" },
@@ -3844,7 +3845,7 @@ file-types = ["gts"]
 roots = ["package.json", "ember-cli-build.js"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-language-servers = [
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },
     { except-features = [
         "format", "diagnostics",
     ], name = "typescript-language-server" },
@@ -3893,7 +3894,7 @@ roots            = ["package.json"]
 comment-tokens   = "//"
 indent           = { tab-width = 4, unit = "    " }
 auto-format      = false
-language-servers = ["circom-lsp"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"circom-lsp"]
 
 [[grammar]]
 name   = "circom"
@@ -3906,7 +3907,7 @@ roots = ["Snakefile", "config.yaml", "environment.yaml", "workflow/"]
 file-types = ["smk", { glob = "Snakefile" } ]
 comment-tokens = ["#", "##"]
 indent = { tab-width = 2, unit = "  " }
-language-servers = ["pylsp" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"pylsp" ]
 
 [language.formatter]
 command = "snakefmt"
@@ -3932,7 +3933,7 @@ source = { git = "https://github.com/elliotfontaine/tree-sitter-cylc", rev = "30
 name = "quint"
 scope = "source.quint"
 file-types = ["qnt"]
-language-servers = ["quint-language-server"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"quint-language-server"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
 indent = { tab-width = 2, unit = "  " }
@@ -3952,7 +3953,7 @@ block-comment-tokens = [
   { start = "/*", end = "*/" },
   { start = "/**", end = "*/" },
 ]
-language-servers = [ "spade-language-server" ]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] }, "spade-language-server" ]
 indent = { tab-width = 4, unit = "    " }
 
 [language.auto-pairs] 
@@ -3985,7 +3986,7 @@ file-types = ["koto"]
 comment-token = "#"
 block-comment-tokens = ["#-", "-#"]
 indent = { tab-width = 2, unit = "  " }
-language-servers = ["koto-ls"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"koto-ls"]
 
 [[grammar]]
 name = "koto"
@@ -3999,7 +4000,7 @@ file-types = ["gpr"]
 roots = ["alire.toml"]
 comment-token = "--"
 indent = { tab-width = 3, unit = "   " }
-language-servers = ["ada-gpr-language-server"]
+language-servers = [{name = "evil-buffer-lsp", only-features = [ "completion"] },"ada-gpr-language-server"]
 
 [[grammar]]
 name = "gpr"

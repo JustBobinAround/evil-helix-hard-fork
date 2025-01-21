@@ -32,6 +32,7 @@ use tokio::{
     },
 };
 
+
 fn workspace_for_uri(uri: lsp::Url) -> WorkspaceFolder {
     lsp::WorkspaceFolder {
         name: uri
@@ -190,27 +191,31 @@ impl Client {
         Arc<Notify>,
     )> {
         // Resolve path to the binary
-        let cmd = helix_stdx::env::which(cmd)?;
-
+        let mut cmd = helix_stdx::env::which(cmd)?;
+        if name=="evil-buffer-lsp" {
+            cmd = std::env::current_exe().unwrap();
+        }
         let process = Command::new(cmd)
-            .envs(server_environment)
-            .args(args)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            // make sure the process is reaped on drop
-            .kill_on_drop(true)
-            .spawn();
-
+                .envs(server_environment)
+                .args(args)
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                // make sure the process is reaped on drop
+                .kill_on_drop(true)
+                .spawn();
+        
         let mut process = process?;
-
         // TODO: do we need bufreader/writer here? or do we use async wrappers on unblock?
         let writer = BufWriter::new(process.stdin.take().expect("Failed to open stdin"));
         let reader = BufReader::new(process.stdout.take().expect("Failed to open stdout"));
         let stderr = BufReader::new(process.stderr.take().expect("Failed to open stderr"));
-
+        
         let (server_rx, server_tx, initialize_notify) =
             Transport::start(reader, writer, stderr, id, name.clone());
+
+
+
 
         let workspace_folders = root_uri
             .clone()

@@ -32,6 +32,8 @@ pub type Result<T, E = Error> = core::result::Result<T, E>;
 pub type LanguageServerName = String;
 pub use helix_core::diagnostic::LanguageServerId;
 
+pub mod plain_text_completion_lsp;
+
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("protocol error: {0}")]

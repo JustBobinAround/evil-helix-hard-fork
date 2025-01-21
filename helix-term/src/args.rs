@@ -6,6 +6,7 @@ use std::path::{Path, PathBuf};
 #[derive(Default)]
 pub struct Args {
     pub display_help: bool,
+    pub running_evil_buffer_lsp: bool,
     pub display_version: bool,
     pub health: bool,
     pub health_arg: Option<String>,
@@ -33,6 +34,7 @@ impl Args {
                 "--" => break, // stop parsing at this point treat the remaining as files
                 "--version" => args.display_version = true,
                 "--help" => args.display_help = true,
+                "--evil-buffer-lsp" => args.running_evil_buffer_lsp = true,
                 "--tutor" => args.load_tutor = true,
                 "--vsplit" => match args.split {
                     Some(_) => anyhow::bail!("can only set a split once of a specific type"),
