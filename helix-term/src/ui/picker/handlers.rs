@@ -11,7 +11,7 @@ use crate::{job, ui::overlay::Overlay};
 
 use super::{CachedPreview, DynQueryCallback, Picker};
 
-pub(super) struct PreviewHighlightHandler<T: 'static + Send + Sync, D: 'static + Send + Sync> {
+pub struct PreviewHighlightHandler<T: 'static + Send + Sync, D: 'static + Send + Sync> {
     trigger: Option<Arc<Path>>,
     phantom_data: std::marker::PhantomData<(T, D)>,
 }
@@ -115,12 +115,12 @@ impl<T: 'static + Send + Sync, D: 'static + Send + Sync> AsyncHook
     }
 }
 
-pub(super) struct DynamicQueryChange {
+pub struct DynamicQueryChange {
     pub query: Arc<str>,
     pub is_paste: bool,
 }
 
-pub(super) struct DynamicQueryHandler<T: 'static + Send + Sync, D: 'static + Send + Sync> {
+pub struct DynamicQueryHandler<T: 'static + Send + Sync, D: 'static + Send + Sync> {
     callback: Arc<DynQueryCallback<T, D>>,
     // Duration used as a debounce.
     // Defaults to 100ms if not provided via `Picker::with_dynamic_query`. Callers may want to set
@@ -131,7 +131,7 @@ pub(super) struct DynamicQueryHandler<T: 'static + Send + Sync, D: 'static + Sen
 }
 
 impl<T: 'static + Send + Sync, D: 'static + Send + Sync> DynamicQueryHandler<T, D> {
-    pub(super) fn new(callback: DynQueryCallback<T, D>, duration_ms: Option<u64>) -> Self {
+    pub fn new(callback: DynQueryCallback<T, D>, duration_ms: Option<u64>) -> Self {
         Self {
             callback: Arc::new(callback),
             debounce: Duration::from_millis(duration_ms.unwrap_or(100)),

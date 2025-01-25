@@ -616,6 +616,8 @@ impl MappableCommand {
         evil_repeat_find_char_motion, "Repeat last evil find motion",
         evil_select_textobject_inner_word, "Select current word",
         evil_keyword_search, "Search for keyword under cursor",
+        evil_file_explorer, "Opens file picker in root dir",
+        evil_file_explorer_in_current_buffer_directory, "Opens file picker in current dir",
         command_palette, "Open command palette",
         goto_word, "Jump to a two-character label",
         extend_to_word, "Extend to a two-character label",
@@ -6884,4 +6886,31 @@ fn evil_select_textobject_inner_word(cx: &mut Context) {
 fn evil_keyword_search(cx: &mut Context) {
     evil_select_textobject_inner_word(cx);
     search_selection_detect_word_boundaries(cx);   
+}
+
+fn evil_file_explorer(cx: &mut Context) {
+    let root = find_workspace().0;
+    if !root.exists() {
+        cx.editor.set_error("Workspace directory does not exist");
+        return;
+    }
+    let picker = ui::evil_explorer::evil_file_explorer(root, &cx.editor.config());
+    cx.push_layer(Box::new(overlaid(picker)));
+}
+
+fn evil_file_explorer_in_current_buffer_directory(cx: &mut Context) {
+    let doc_dir = doc!(cx.editor)
+        .path()
+        .and_then(|path| path.parent().map(|path| path.to_path_buf()));
+
+    let path = match doc_dir {
+        Some(path) => path,
+        None => {
+            cx.editor.set_error("current buffer has no path or parent");
+            return;
+        }
+    };
+
+    let picker = ui::evil_explorer::evil_file_explorer(path, &cx.editor.config());
+    cx.push_layer(Box::new(overlaid(picker)));
 }

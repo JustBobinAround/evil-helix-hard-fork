@@ -1,23 +1,42 @@
-pub mod handlers;
-pub mod query;
-
-pub use crate::{
+/*
+    creating a clone of file_picker to modify
+*/
+use crate::{
+    filter_picker_entry,
     alt,
     compositor::{self, Component, Compositor, Context, Event, EventResult},
     ctrl, key, shift,
     ui::{
         self,
         document::{render_document, LinePos, TextRenderer},
-        picker::query::PickerQuery,
         text_decorations::DecorationManager,
         EditorView,
+        PathBuf,
+        PromptEvent,
+        PickerColumn,
+        Prompt,
+        FileLocation,
+        picker::{
+            query::PickerQuery,
+            CachedPreview,
+            Injector,
+            Column,
+            Preview,
+            PathOrId,
+            MAX_FILE_SIZE_FOR_PREVIEW,
+            MIN_AREA_WIDTH_FOR_PREVIEW,
+            ID,
+            inject_nucleo_item,
+            handlers::{DynamicQueryChange, DynamicQueryHandler, PreviewHighlightHandler}
+        },
     },
 };
+
 use futures_util::future::BoxFuture;
 use helix_event::AsyncHook;
 use nucleo::pattern::{CaseMatching, Normalization};
 use nucleo::{Config, Nucleo};
-use thiserror::Error;
+
 use tokio::sync::mpsc::Sender;
 use tui::{
     buffer::Buffer as Surface,
@@ -29,6 +48,7 @@ use tui::{
 use tui::widgets::Widget;
 
 use std::{
+    error::Error,
     borrow::Cow,
     collections::HashMap,
     io::Read,
@@ -39,7 +59,6 @@ use std::{
     },
 };
 
-use crate::ui::{Prompt, PromptEvent};
 use helix_core::{
     char_idx_at_visual_offset, fuzzy::MATCHER, movement::Direction,
     text_annotations::TextAnnotations, unicode::segmentation::UnicodeSegmentation, Position,
@@ -49,185 +68,107 @@ use helix_view::{
     graphics::{CursorKind, Margin, Modifier, Rect},
     theme::Style,
     view::ViewPosition,
-    Document, DocumentId, Editor,
+    Document, Editor,
 };
 
-use self::handlers::{DynamicQueryChange, DynamicQueryHandler, PreviewHighlightHandler};
-
-pub const ID: &str = "picker";
-
-pub const MIN_AREA_WIDTH_FOR_PREVIEW: u16 = 72;
-/// Biggest file size to preview in bytes
-pub const MAX_FILE_SIZE_FOR_PREVIEW: u64 = 10 * 1024 * 1024;
-
-#[derive(PartialEq, Eq, Hash)]
-pub enum PathOrId<'a> {
-    Id(DocumentId),
-    Path(&'a Path),
-}
-
-impl<'a> From<&'a Path> for PathOrId<'a> {
-    fn from(path: &'a Path) -> Self {
-        Self::Path(path)
-    }
-}
-
-impl From<DocumentId> for PathOrId<'_> {
-    fn from(v: DocumentId) -> Self {
-        Self::Id(v)
-    }
-}
 
 type FileCallback<T> = Box<dyn for<'a> Fn(&'a Editor, &'a T) -> Option<FileLocation<'a>>>;
+type FilePicker = Picker<PathBuf, PathBuf>;
 
-/// File path and range of lines (used to align and highlight lines)
-pub type FileLocation<'a> = (PathOrId<'a>, Option<(usize, usize)>);
-
-pub enum CachedPreview {
-    Document(Box<Document>),
-    Binary,
-    LargeFile,
-    NotFound,
-}
-
-// We don't store this enum in the cache so as to avoid lifetime constraints
-// from borrowing a document already opened in the editor.
-pub enum Preview<'picker, 'editor> {
-    Cached(&'picker CachedPreview),
-    EditorDocument(&'editor Document),
-}
-
-impl Preview<'_, '_> {
-    pub fn document(&self) -> Option<&Document> {
-        match self {
-            Preview::EditorDocument(doc) => Some(doc),
-            Preview::Cached(CachedPreview::Document(doc)) => Some(doc),
-            _ => None,
-        }
-    }
-
-    /// Alternate text to show for the preview.
-    pub fn placeholder(&self) -> &str {
-        match *self {
-            Self::EditorDocument(_) => "<Invalid file location>",
-            Self::Cached(preview) => match preview {
-                CachedPreview::Document(_) => "<Invalid file location>",
-                CachedPreview::Binary => "<Binary file>",
-                CachedPreview::LargeFile => "<File too large to preview>",
-                CachedPreview::NotFound => "<File not found>",
-            },
-        }
-    }
-}
-
-pub fn inject_nucleo_item<T, D>(
-    injector: &nucleo::Injector<T>,
-    columns: &[Column<T, D>],
-    item: T,
-    editor_data: &D,
-) {
-    injector.push(item, |item, dst| {
-        for (column, text) in columns.iter().filter(|column| column.filter).zip(dst) {
-            *text = column.format_text(item, editor_data).into()
-        }
-    });
-}
-
-pub struct Injector<T, D> {
-    pub dst: nucleo::Injector<T>,
-    pub columns: Arc<[Column<T, D>]>,
-    pub editor_data: Arc<D>,
-    pub version: usize,
-    pub picker_version: Arc<AtomicUsize>,
-    /// A marker that requests a redraw when the injector drops.
-    /// This marker causes the "running" indicator to disappear when a background job
-    /// providing items is finished and drops. This could be wrapped in an [Arc] to ensure
-    /// that the redraw is only requested when all Injectors drop for a Picker (which removes
-    /// the "running" indicator) but the redraw handle is debounced so this is unnecessary.
-    pub _redraw: helix_event::RequestRedrawOnDrop,
-}
-
-impl<I, D> Clone for Injector<I, D> {
-    fn clone(&self) -> Self {
-        Injector {
-            dst: self.dst.clone(),
-            columns: self.columns.clone(),
-            editor_data: self.editor_data.clone(),
-            version: self.version,
-            picker_version: self.picker_version.clone(),
-            _redraw: helix_event::RequestRedrawOnDrop,
-        }
-    }
-}
-
-#[derive(Error, Debug)]
-#[error("picker has been shut down")]
-pub struct InjectorShutdown;
-
-impl<T, D> Injector<T, D> {
-    pub fn push(&self, item: T) -> Result<(), InjectorShutdown> {
-        if self.version != self.picker_version.load(atomic::Ordering::Relaxed) {
-            return Err(InjectorShutdown);
-        }
-
-        inject_nucleo_item(&self.dst, &self.columns, item, &self.editor_data);
-        Ok(())
-    }
-}
-
-type ColumnFormatFn<T, D> = for<'a> fn(&'a T, &'a D) -> Cell<'a>;
-
-pub struct Column<T, D> {
-    pub name: Arc<str>,
-    pub format: ColumnFormatFn<T, D>,
-    /// Whether the column should be passed to nucleo for matching and filtering.
-    /// `DynamicPicker` uses this so that the dynamic column (for example regex in
-    /// global search) is not used for filtering twice.
-    pub filter: bool,
-    pub hidden: bool,
-}
-
-impl<T, D> Column<T, D> {
-    pub fn new(name: impl Into<Arc<str>>, format: ColumnFormatFn<T, D>) -> Self {
-        Self {
-            name: name.into(),
-            format,
-            filter: true,
-            hidden: false,
-        }
-    }
-
-    /// A column which does not display any contents
-    pub fn hidden(name: impl Into<Arc<str>>) -> Self {
-        let format = |_: &T, _: &D| unreachable!();
-
-        Self {
-            name: name.into(),
-            format,
-            filter: false,
-            hidden: true,
-        }
-    }
-
-    pub fn without_filtering(mut self) -> Self {
-        self.filter = false;
-        self
-    }
-
-    pub fn format<'a>(&self, item: &'a T, data: &'a D) -> Cell<'a> {
-        (self.format)(item, data)
-    }
-
-    fn format_text<'a>(&self, item: &'a T, data: &'a D) -> Cow<'a, str> {
-        let text: String = self.format(item, data).content.into();
-        text.into()
-    }
-}
-
-/// Returns a new list of options to replace the contents of the picker
-/// when called with the current picker query,
 type DynQueryCallback<T, D> =
     fn(&str, &mut Editor, Arc<D>, &Injector<T, D>) -> BoxFuture<'static, anyhow::Result<()>>;
+
+pub fn evil_file_explorer(root: PathBuf, config: &helix_view::editor::Config) -> FilePicker {
+    use ignore::{types::TypesBuilder, WalkBuilder};
+    use std::time::Instant;
+
+    let now = Instant::now();
+
+    let dedup_symlinks = config.file_picker.deduplicate_links;
+    let absolute_root = root.canonicalize().unwrap_or_else(|_| root.clone());
+
+    let mut walk_builder = WalkBuilder::new(&root);
+    walk_builder
+        .hidden(config.file_picker.hidden)
+        .parents(config.file_picker.parents)
+        .ignore(config.file_picker.ignore)
+        .follow_links(config.file_picker.follow_symlinks)
+        .git_ignore(config.file_picker.git_ignore)
+        .git_global(config.file_picker.git_global)
+        .git_exclude(config.file_picker.git_exclude)
+        .sort_by_file_name(|name1, name2| name1.cmp(name2))
+        .max_depth(config.file_picker.max_depth)
+        .filter_entry(move |entry| filter_picker_entry(entry, &absolute_root, dedup_symlinks));
+
+    walk_builder.add_custom_ignore_filename(helix_loader::config_dir().join("ignore"));
+    walk_builder.add_custom_ignore_filename(".helix/ignore");
+
+    // We want to exclude files that the editor can't handle yet
+    let mut type_builder = TypesBuilder::new();
+    type_builder
+        .add(
+            "compressed",
+            "*.{zip,gz,bz2,zst,lzo,sz,tgz,tbz2,lz,lz4,lzma,lzo,z,Z,xz,7z,rar,cab}",
+        )
+        .expect("Invalid type definition");
+    type_builder.negate("all");
+    let excluded_types = type_builder
+        .build()
+        .expect("failed to build excluded_types");
+    walk_builder.types(excluded_types);
+    let mut files = walk_builder.build().filter_map(|entry| {
+        let entry = entry.ok()?;
+        if !entry.file_type()?.is_file() {
+            return None;
+        }
+        Some(entry.into_path())
+    });
+    log::debug!("file_picker init {:?}", Instant::now().duration_since(now));
+
+    let columns = [PickerColumn::new(
+        "path",
+        |item: &PathBuf, root: &PathBuf| {
+            item.strip_prefix(root)
+                .unwrap_or(item)
+                .to_string_lossy()
+                .into()
+        },
+    )];
+    let picker = Picker::new(columns, 0, [], root, move |cx, path: &PathBuf, action| {
+        if let Err(e) = cx.editor.open(path, action) {
+            let err = if let Some(err) = e.source() {
+                format!("{}", err)
+            } else {
+                format!("unable to open \"{}\"", path.display())
+            };
+            cx.editor.set_error(err);
+        }
+    })
+    .with_preview(|_editor, path| Some((path.as_path().into(), None)));
+    let injector = picker.injector();
+    let timeout = std::time::Instant::now() + std::time::Duration::from_millis(30);
+
+    let mut hit_timeout = false;
+    for file in &mut files {
+        if injector.push(file).is_err() {
+            break;
+        }
+        if std::time::Instant::now() >= timeout {
+            hit_timeout = true;
+            break;
+        }
+    }
+    if hit_timeout {
+        std::thread::spawn(move || {
+            for file in files {
+                if injector.push(file).is_err() {
+                    break;
+                }
+            }
+        });
+    }
+    picker
+}
 
 pub struct Picker<T: 'static + Send + Sync, D: 'static> {
     columns: Arc<[Column<T, D>]>,

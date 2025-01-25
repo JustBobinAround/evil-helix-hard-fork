@@ -8,6 +8,7 @@ pub mod menu;
 pub mod overlay;
 pub mod picker;
 pub mod popup;
+pub mod evil_explorer;
 mod prompt;
 mod spinner;
 mod statusline;
