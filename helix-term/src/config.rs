@@ -9,6 +9,22 @@ use std::fmt::Display;
 use std::fs;
 use std::io::Error as IOError;
 use toml::de::Error as TomlError;
+macro_rules! ok_or_default {
+    ($option:expr, $default:expr) => {
+        match $option {
+            Ok(value) => value,
+            Err(_) => return $default,
+        }
+    };
+}
+macro_rules! some_or_default {
+    ($option:expr, $default:expr) => {
+        match $option {
+            Some(value) => value,
+            None => return $default,
+        }
+    };
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Config {
@@ -57,6 +73,63 @@ impl Display for ConfigLoadError {
 }
 
 impl Config {
+    fn load_both_configs(
+        global: ConfigRaw,
+        local: ConfigRaw,
+        evil: bool,
+    ) -> Result<Config, ConfigLoadError> {
+        let mut keys = if !evil {
+            keymap::default()
+        } else {
+            keymap::default_evil()
+        };
+
+        if let Some(global_keys) = global.keys {
+            merge_keys(&mut keys, global_keys)
+        }
+        if let Some(local_keys) = local.keys {
+            merge_keys(&mut keys, local_keys)
+        }
+
+        let editor = match (global.editor, local.editor) {
+            (None, None) => helix_view::editor::Config::default_evil(),
+            (None, Some(val)) | (Some(val), None) => {
+                val.try_into().map_err(ConfigLoadError::BadConfig)?
+            }
+            (Some(global), Some(local)) => merge_toml_values(global, local, 3)
+                .try_into()
+                .map_err(ConfigLoadError::BadConfig)?,
+        };
+
+        Ok(Config {
+            theme: local.theme.or(global.theme),
+            keys,
+            editor,
+        })
+    }
+
+    fn load_either_config(config: ConfigRaw, evil: bool) -> Result<Config, ConfigLoadError> {
+        let mut keys = if !evil {
+            keymap::default()
+        } else {
+            keymap::default_evil()
+        };
+
+        if let Some(keymap) = config.keys {
+            merge_keys(&mut keys, keymap);
+        }
+
+        let editor = config.editor.map_or_else(
+            || Ok(helix_view::editor::Config::default_evil()),
+            |val| val.try_into().map_err(ConfigLoadError::BadConfig),
+        )?;
+        
+        Ok(Config {
+            theme: config.theme,
+            keys,
+            editor,
+        })
+    }
     pub fn load(
         global: Result<String, ConfigLoadError>,
         local: Result<String, ConfigLoadError>,
@@ -65,37 +138,10 @@ impl Config {
             global.and_then(|file| toml::from_str(&file).map_err(ConfigLoadError::BadConfig));
         let local_config: Result<ConfigRaw, ConfigLoadError> =
             local.and_then(|file| toml::from_str(&file).map_err(ConfigLoadError::BadConfig));
-        let evil = Self::is_evil(&global_config, &local_config);
+        let evil = Self::is_evil(&global_config) || Self::is_evil(&local_config);
         let mut res = match (global_config, local_config) {
             (Ok(global), Ok(local)) => {
-                let mut keys = if !evil {
-                    keymap::default()
-                } else {
-                    keymap::default_evil()
-                };
-
-                if let Some(global_keys) = global.keys {
-                    merge_keys(&mut keys, global_keys)
-                }
-                if let Some(local_keys) = local.keys {
-                    merge_keys(&mut keys, local_keys)
-                }
-
-                let editor = match (global.editor, local.editor) {
-                    (None, None) => helix_view::editor::Config::default_evil(),
-                    (None, Some(val)) | (Some(val), None) => {
-                        val.try_into().map_err(ConfigLoadError::BadConfig)?
-                    }
-                    (Some(global), Some(local)) => merge_toml_values(global, local, 3)
-                        .try_into()
-                        .map_err(ConfigLoadError::BadConfig)?,
-                };
-
-                Config {
-                    theme: local.theme.or(global.theme),
-                    keys,
-                    editor,
-                }
+                Self::load_both_configs(global, local, evil)
             }
             // if any configs are invalid return that first
             (_, Err(ConfigLoadError::BadConfig(err)))
@@ -103,28 +149,12 @@ impl Config {
                 return Err(ConfigLoadError::BadConfig(err))
             }
             (Ok(config), Err(_)) | (Err(_), Ok(config)) => {
-                let mut keys = if !evil {
-                    keymap::default()
-                } else {
-                    keymap::default_evil()
-                };
-
-                if let Some(keymap) = config.keys {
-                    merge_keys(&mut keys, keymap);
-                }
-                Config {
-                    theme: config.theme,
-                    keys,
-                    editor: config.editor.map_or_else(
-                        || Ok(helix_view::editor::Config::default_evil()),
-                        |val| val.try_into().map_err(ConfigLoadError::BadConfig),
-                    )?,
-                }
+                Self::load_either_config(config, evil)
             }
 
             // these are just two io errors return the one for the global config
             (Err(err), Err(_)) => return Err(err),
-        };
+        }?;
 
         // HACK: because we can't easily differentiate between "no configuration" and
         // "explicit non-evil mode configuration"
@@ -136,59 +166,13 @@ impl Config {
     }
 
     fn is_evil(
-        global_config: &Result<ConfigRaw, ConfigLoadError>,
-        local_config: &Result<ConfigRaw, ConfigLoadError>,
+        config: &Result<ConfigRaw, ConfigLoadError>
     ) -> bool {
-        if local_config.is_ok()
-            && local_config.as_ref().unwrap().editor.is_some()
-            && local_config
-                .as_ref()
-                .unwrap()
-                .editor
-                .as_ref()
-                .unwrap()
-                .get("evil")
-                .is_some()
-        {
-            log::info!("Retrieving evil mode from local config");
-            return local_config
-                .as_ref()
-                .unwrap()
-                .editor
-                .as_ref()
-                .unwrap()
-                .get("evil")
-                .unwrap()
-                .as_bool()
-                .expect("Incorrect type for `editor.config`, expected `bool`");
-        }
-
-        if global_config.is_ok()
-            && global_config.as_ref().unwrap().editor.is_some()
-            && global_config
-                .as_ref()
-                .unwrap()
-                .editor
-                .as_ref()
-                .unwrap()
-                .get("evil")
-                .is_some()
-        {
-            log::info!("Retrieving evil mode from global config");
-            return global_config
-                .as_ref()
-                .unwrap()
-                .editor
-                .as_ref()
-                .unwrap()
-                .get("evil")
-                .unwrap()
-                .as_bool()
-                .expect("Incorrect type for `editor.config`, expected `bool`");
-        }
-
-        log::debug!("Evil mode not explicitly set in local/global config, will enable default");
-        true
+        let config = ok_or_default!(config, true);
+        let editor = some_or_default!(&config.editor, true);
+        let evil = some_or_default!(editor.get("evil"), true);
+        evil.as_bool()
+            .expect("Incorrect type for `editor.config`, expected `bool`")
     }
 
     pub fn load_default() -> Result<Config, ConfigLoadError> {
