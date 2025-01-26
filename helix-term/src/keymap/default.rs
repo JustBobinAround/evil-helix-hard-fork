@@ -638,7 +638,6 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
             "f" => file_picker,
             "F" => file_picker_in_current_directory,
             "v" => evil_file_explorer,
-            "V" => evil_file_explorer_in_current_buffer_directory,
             "b" => buffer_picker,
             "j" => jumplist_picker,
             "s" => { "Symbol pickers"

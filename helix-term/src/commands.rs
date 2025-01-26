@@ -617,7 +617,6 @@ impl MappableCommand {
         evil_select_textobject_inner_word, "Select current word",
         evil_keyword_search, "Search for keyword under cursor",
         evil_file_explorer, "Opens file picker in root dir",
-        evil_file_explorer_in_current_buffer_directory, "Opens file picker in current dir",
         command_palette, "Open command palette",
         goto_word, "Jump to a two-character label",
         extend_to_word, "Extend to a two-character label",
@@ -6895,22 +6894,5 @@ fn evil_file_explorer(cx: &mut Context) {
         return;
     }
     let picker = ui::evil_explorer::evil_file_explorer(root, &cx.editor.config());
-    cx.push_layer(Box::new(overlaid(picker)));
-}
-
-fn evil_file_explorer_in_current_buffer_directory(cx: &mut Context) {
-    let doc_dir = doc!(cx.editor)
-        .path()
-        .and_then(|path| path.parent().map(|path| path.to_path_buf()));
-
-    let path = match doc_dir {
-        Some(path) => path,
-        None => {
-            cx.editor.set_error("current buffer has no path or parent");
-            return;
-        }
-    };
-
-    let picker = ui::evil_explorer::evil_file_explorer(path, &cx.editor.config());
     cx.push_layer(Box::new(overlaid(picker)));
 }
