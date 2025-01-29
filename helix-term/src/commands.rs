@@ -616,6 +616,7 @@ impl MappableCommand {
         evil_repeat_find_char_motion, "Repeat last evil find motion",
         evil_select_textobject_inner_word, "Select current word",
         evil_keyword_search, "Search for keyword under cursor",
+        evil_goto_last_line, "Go to end of line (with vsl support)",
         command_palette, "Open command palette",
         goto_word, "Jump to a two-character label",
         extend_to_word, "Extend to a two-character label",
@@ -6884,4 +6885,11 @@ fn evil_select_textobject_inner_word(cx: &mut Context) {
 fn evil_keyword_search(cx: &mut Context) {
     evil_select_textobject_inner_word(cx);
     search_selection_detect_word_boundaries(cx);   
+}
+
+fn evil_goto_last_line(cx: &mut Context) {
+    goto_last_line(cx);
+    if cx.editor.using_evil_line_selection {
+        extend_to_line_bounds(cx);
+    }
 }

@@ -765,7 +765,7 @@ pub fn default_evil() -> HashMap<Mode, KeyTrie> {
 
         "0" => goto_line_start,
         "$" => goto_line_end,
-        "G" => goto_last_line,
+        "G" => evil_goto_last_line,
         "del" => delete_selection,
     });
     let mut select = normal.clone();
